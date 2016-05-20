@@ -13,7 +13,7 @@ library Fixation3D;
 uses
   SysUtils,
   Classes,
-  FixFuncClass3dCalcByEllipsoidWP in 'units\FixFuncClass3dCalcByEllipsoidWP.pas';
+  FixFuncClass3dCalcByEllipsoid in 'units\FixFuncClass3dCalcByEllipsoid.pas';
 
 {$R *.res}
 
