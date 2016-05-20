@@ -1,4 +1,4 @@
-//****************************************************************************************************************************************************
+ï»¿//****************************************************************************************************************************************************
 //****************************************************************************************************************************************************
 //***
 //***
@@ -8,11 +8,11 @@
 //***       Datum:            20.05.2016
 //***       Entwickler:       Sascha Weber (sascha.weber@tu-dresden.de)
 //***
-//***       Beschreibung:     Dieser Funktion werden dreidimensionale Blickorte übergeben und anhand einstellbarer Parameter
-//***                         geprüft, ob sich die 3D-Blickorte innerhalb eines ellipsoiden Toleranzberereich befinden. Liegt die
-//***                         minimale Anzahl an Samples innerhalb der ellispoiden Fixationshülle, wird die Fixationshypothese bestätigt.
-//***                         Mit jedem neuen Sample wird die Fixationshypothese erneut geprüft und bei Bestätigung das neue Sample der
-//***                         bestehenden Fixation hinzugefügt. Die Rückgabewerte beinhalten u.a. die Parameter der dreidimensionalen Fixation.
+//***       Beschreibung:     Dieser Funktion werden dreidimensionale Blickorte Ã¼bergeben und anhand einstellbarer Parameter
+//***                         geprÃ¼ft, ob sich die 3D-Blickorte innerhalb eines ellipsoiden Toleranzberereich befinden. Liegt die
+//***                         minimale Anzahl an Samples innerhalb der ellispoiden FixationshÃ¼lle, wird die Fixationshypothese bestÃ¤tigt.
+//***                         Mit jedem neuen Sample wird die Fixationshypothese erneut geprÃ¼ft und bei BestÃ¤tigung das neue Sample der
+//***                         bestehenden Fixation hinzugefÃ¼gt. Die RÃ¼ckgabewerte beinhalten u.a. die Parameter der dreidimensionalen Fixation.
 //***                         Die detaillierte Beschreibung der Parameter und Algorithmen erfolgt an den entsprechenden Stellen im Source-Code.
 //***
 //***
@@ -40,28 +40,28 @@ uses Windows, CodeSiteLogging;
 type
   TFixFuncClass3dCalcByEllipsoid = class
   const
-    RING_SIZE = 121;                    // *  Größe des Ringpuffers, in dem die berechneten Samples gespeichert werden.
-                                        // *  Der Wert muss größer als die minimale Anzahl an Samples zur Erkennung einer Fixation iMinimumFixSamples sein.
+    RING_SIZE = 121;                    // *  GrÃ¶ÃŸe des Ringpuffers, in dem die berechneten Samples gespeichert werden.
+                                        // *  Der Wert muss grÃ¶ÃŸer als die minimale Anzahl an Samples zur Erkennung einer Fixation iMinimumFixSamples sein.
 
                                         // *  Es werden 3 verschiedene Fixationen erfasst.
     NEW_FIX = 0;			                  // *  Neue Fixation
-    PRES_FIX = 1;                       // *  Gegenwärtige Fixation
+    PRES_FIX = 1;                       // *  GegenwÃ¤rtige Fixation
     PREV_FIX = 2;                       // *  Vorangegangene Fixation
 
   Type
 
     _stFix = record 			              // *  Fixations-Datenstruktur
-      iStartCount: Integer; 		        // *  Zählvariable zu DetectFixation() sobald die Fixation beginnt
-      iEndCount: Integer; 		          // *  Zählvariable zu DetectFixation() sobald die Fixation endet.
+      iStartCount: Integer; 		        // *  ZÃ¤hlvariable zu DetectFixation() sobald die Fixation beginnt
+      iEndCount: Integer; 		          // *  ZÃ¤hlvariable zu DetectFixation() sobald die Fixation endet.
 
-      iNEyeFoundSamples: Integer; 	    // *  Anzahl gültiger GazePoint-Samples mit ‘eye-found’, so lange die Fixations-
+      iNEyeFoundSamples: Integer; 	    // *  Anzahl gÃ¼ltiger GazePoint-Samples mit â€˜eye-foundâ€™, so lange die Fixations-
                                         // *  Hypothese aufrecht erhalten bleibt.
                                         // * 	  Hinweis: 	Falls iNEyeFoundSamples 0 ist, existiert auch keine Fixations-
-                                        // *		          Hypothese, z.B. wenn es keine Blickortdaten zur Unterstützung
+                                        // *		          Hypothese, z.B. wenn es keine Blickortdaten zur UnterstÃ¼tzung
                                         // * 		          der Hypothese mehr gibt.
 
       fXSum: Single; 			              // *  Addition zur Berechnung der Durchschnittswerte
-      fYSum: Single; 	 		              // *  Die Summe wird zur Durchschnittsberechnung durch die Anzahl gültiger Samples iNEyeFoundSamples dividiert.
+      fYSum: Single; 	 		              // *  Die Summe wird zur Durchschnittsberechnung durch die Anzahl gÃ¼ltiger Samples iNEyeFoundSamples dividiert.
       fZSum: Single;
 
       fX: Single;  	  		              // *  Zentrum der Fixation
@@ -74,11 +74,11 @@ type
       fEllipsoidYaw: Single;
       fEllipsoidPitch: Single;
 
-      bFixationVerified: Integer; 	    // *  Flag, ob die Fixations-Hypothese bestätigt wurde
+      bFixationVerified: Integer; 	    // *  Flag, ob die Fixations-Hypothese bestÃ¤tigt wurde
     end;
 
     _stRingBuf = record 		            // *  Ringpuffer zur Speicherung des letzen Blickortes und der Fixationsstatus-Werte:
-      iDfCallCount: Integer; 		        // *  DetectFixation-Zählvariable zur Zeit des Samples
+      iDfCallCount: Integer; 		        // *  DetectFixation-ZÃ¤hlvariable zur Zeit des Samples
 
       bGazeFound: Integer; 		          // *  Flag, ob Blickort gefunden
 
@@ -86,7 +86,7 @@ type
       fYGaze: Single;
       fZGaze: Single;
 
-      fXFix: Single; 			              // *  aktuelle Fixationskoordinaten – beinhaltet den aktuellen Blickort
+      fXFix: Single; 			              // *  aktuelle Fixationskoordinaten â€“ beinhaltet den aktuellen Blickort
       fYFix: Single;
       fZFix: Single;
 
@@ -105,23 +105,23 @@ type
     end;
 
   private
-    iDfCallCount: Integer;              // *  Zählvariable, wie oft DetectFixation() aufgerufen wurde, seitdem die Funktion
-                                        // *  initialisiert wurde (60stel bzw. 120stel einer Sekunde, abhängig von der ET-
+    iDfCallCount: Integer;              // *  ZÃ¤hlvariable, wie oft DetectFixation() aufgerufen wurde, seitdem die Funktion
+                                        // *  initialisiert wurde (60stel bzw. 120stel einer Sekunde, abhÃ¤ngig von der ET-
                                         // *  Sample Rate)
 
-    iNOutsidePresEllipsoid: Integer;    // *  Anzahl fortlaufender Blickort-Samples außerhalb des PRES_FIX-
+    iNOutsidePresEllipsoid: Integer;    // *  Anzahl fortlaufender Blickort-Samples auÃŸerhalb des PRES_FIX-
                                         // *  Akzeptanzbereiches
 
     bGazeInPresFix: Integer;            // *  Befindet sich der Blickort in der aktuellen Fixation (1=in, 0=out)
-    bGazeInNewFix:  Integer;            // *  Befindet sich der Blickort in der nächsten Fixation  (1=in, 0=out)
+    bGazeInNewFix:  Integer;            // *  Befindet sich der Blickort in der nÃ¤chsten Fixation  (1=in, 0=out)
 
     iMaxMissedSamples: Integer;         // *  Maximale Anzahl fehlender, fortlaufender Blickort-Samples, um die Fixation
-                                        // *  fortführen zu können
+                                        // *  fortfÃ¼hren zu kÃ¶nnen
 
-    iMaxOutSamples: Integer; 		        // *  Maximale Anzahl fehlender, fortlaufender Blickort-Samples, die außerhalb des
-                                        // *  Akzeptanz-Bereiches liegen dürfen
+    iMaxOutSamples: Integer; 		        // *  Maximale Anzahl fehlender, fortlaufender Blickort-Samples, die auÃŸerhalb des
+                                        // *  Akzeptanz-Bereiches liegen dÃ¼rfen
 
-    stFix: array [0 .. 2] of _stFix;	  // neue, gegnwärtige und vorangegangene Fixation
+    stFix: array [0 .. 2] of _stFix;	  // neue, gegnwÃ¤rtige und vorangegangene Fixation
                                         // *  NEW_FIX = 0
                                         // *  PRES_FIX = 1
                                         // *  PREV_FIX = 2
@@ -157,7 +157,7 @@ type
     procedure InitFixation(iMinimumFixSamples: Integer);
 
     function DetectFixation(  // INPUT
-                              bValidSample: Integer;
+                              bGazepointFound: Integer;
 
                               fXLeftEye: Single;
                               fYLeftEye: Single;
@@ -175,7 +175,7 @@ type
                               iMinimumFixSamples: Integer;
 
                               // OUTPUT
-                 out          pbValidSampleDelayed: Integer;
+                 out          pbGazepointFoundDelayed: Integer;
 
                  out          pfXGazeDelayed,
                               pfYGazeDelayed,
@@ -213,7 +213,7 @@ const
 
 
 procedure TFixFuncClass3dCalcByEllipsoid.ResetFixationHypothesis(iNewPresOrPrev: Integer);
-// * Zurücksetzen der NewPresPrev-Fixation (abhängig vom Übergabe-Argument)
+// * ZurÃ¼cksetzen der NewPresPrev-Fixation (abhÃ¤ngig vom Ãœbergabe-Argument)
 
 begin
   stFix[iNewPresOrPrev].iStartCount := 0;
@@ -232,8 +232,8 @@ begin
   stFix[iNewPresOrPrev].fEllipsoidPitch := 0;
   stFix[iNewPresOrPrev].bFixationVerified := FALSE;
 
-  // * Falls die PRES-Fixation zurückgesetzt wird, muss auch die Anzahl aufeinander folgender Blickort-Samples
-  // * außerhalb des Fixations-Akzeptanz-Bereiches zurückgesetzt werden.
+  // * Falls die PRES-Fixation zurÃ¼ckgesetzt wird, muss auch die Anzahl aufeinander folgender Blickort-Samples
+  // * auÃŸerhalb des Fixations-Akzeptanz-Bereiches zurÃ¼ckgesetzt werden.
   if (iNewPresOrPrev = PRES_FIX) then
   begin
     iNOutsidePresEllipsoid := 0;
@@ -311,55 +311,55 @@ end;
 
 
 procedure TFixFuncClass3dCalcByEllipsoid.TestPresFixHypAndUpdateRingBuffer(iMinimumFixSamples: Integer);
-// * Jedes Mal, wenn ein Blickort zur jetzigen Fixations-Hypothese hinzugefügt wird, prüft die Funktion, ob die
-// * Fixations-Hypothese bestätigt werden kann. Falls ja, updatet diese Funktion den Ringpuffer mit den entsprechenden Werten.
+// * Jedes Mal, wenn ein Blickort zur jetzigen Fixations-Hypothese hinzugefÃ¼gt wird, prÃ¼ft die Funktion, ob die
+// * Fixations-Hypothese bestÃ¤tigt werden kann. Falls ja, updatet diese Funktion den Ringpuffer mit den entsprechenden Werten.
 
-// * Zur Erinnerung: Der iEyeMoving-Wert im aktuellen Ringpuffer Index wurde mit ‘MOVING’ initialisiert, zu
+// * Zur Erinnerung: Der iEyeMoving-Wert im aktuellen Ringpuffer Index wurde mit â€˜MOVINGâ€™ initialisiert, zu
 // * Beginn mit dem Aufruf der Funktion: DetectFixation()
 
 var
   iRingPointOffset: Integer; 			  // * Ring-Index-Offset in Bezug auf den aktuellen Ring-Index
   iDumRingIndex: Integer; 			    // * Dummy Ring-Index
   iNFixSamples: Integer; 			      // * Anzahl der Samples innerhalb der Fixation bis jetzt
-  iNNewSamples: Integer; 			      // * Anzahl neu hinzuzufügender Samples zur Ringpuffer Fixation
+  iNNewSamples: Integer; 			      // * Anzahl neu hinzuzufÃ¼gender Samples zur Ringpuffer Fixation
 
 begin
 
-  // * Falls die gegenwärtige Fixations-Hypothese noch nicht überprüft wurde, prüfe die Hypothese jetzt.
+  // * Falls die gegenwÃ¤rtige Fixations-Hypothese noch nicht Ã¼berprÃ¼ft wurde, prÃ¼fe die Hypothese jetzt.
   if (stFix[PRES_FIX].bFixationVerified = FALSE) then
   begin
 
-    // * Falls genügend Samples zur Erkennung einer gültigen Fixation vorliegen …
+    // * Falls genÃ¼gend Samples zur Erkennung einer gÃ¼ltigen Fixation vorliegen â€¦
     if (stFix[PRES_FIX].iNEyeFoundSamples >= iMinimumFixSamples) then
     begin
-      // * Deklrariere die gegenwärtige Fixation als bestätigt.
+      // * Deklrariere die gegenwÃ¤rtige Fixation als bestÃ¤tigt.
       stFix[PRES_FIX].bFixationVerified := TRUE;
 
       // * Markiere die Fixation innerhalb des Ringpuffers:
-      // * Füge alle Samples in den Ringpuffer ein, vom Start bis zum Endpunkt der PRES_Fixation:
-      // * Berechne die Anzahl der Samples in der aktuellen Fixation, inklusive der guten Samples, der ‚no-track‘ Samples
-      // * und auch der ‚out‘ Samples, die in die Fixation aufgenommen werden sollen.
-      // * Beachte: +1 zur Berücksichtigung der beiden Start- und End-Samples.
+      // * FÃ¼ge alle Samples in den Ringpuffer ein, vom Start bis zum Endpunkt der PRES_Fixation:
+      // * Berechne die Anzahl der Samples in der aktuellen Fixation, inklusive der guten Samples, der â€šno-trackâ€˜ Samples
+      // * und auch der â€šoutâ€˜ Samples, die in die Fixation aufgenommen werden sollen.
+      // * Beachte: +1 zur BerÃ¼cksichtigung der beiden Start- und End-Samples.
 
       iNFixSamples := stFix[PRES_FIX].iEndCount - stFix[PRES_FIX].iStartCount + 1;
 
-      // * Stelle sicher, dass die Anzahl der Samples nicht die Ringpuffer-Größe überschreitet.
+      // * Stelle sicher, dass die Anzahl der Samples nicht die Ringpuffer-GrÃ¶ÃŸe Ã¼berschreitet.
       Assert(iNFixSamples > 0);
       Assert(iNFixSamples <= RING_SIZE);
       if (iNFixSamples > RING_SIZE) then
         iNFixSamples := RING_SIZE;
 
-      // * Gehe rückwärts durch den Ringpuffer, beginnend mit dem aktuellen Ringindex, um die Anzahl der Fixations-
+      // * Gehe rÃ¼ckwÃ¤rts durch den Ringpuffer, beginnend mit dem aktuellen Ringindex, um die Anzahl der Fixations-
       // * Samples.
       for iRingPointOffset := 0 to iNFixSamples - 1 do
       begin
-        // * Berechne den nächsten Ringindex (rückwärts).
+        // * Berechne den nÃ¤chsten Ringindex (rÃ¼ckwÃ¤rts).
         iDumRingIndex := iCurrentRingIndex - iRingPointOffset;
         if (iDumRingIndex < 0) then
           Inc(iDumRingIndex, RING_SIZE);
         Assert((iDumRingIndex >= 0) and (iDumRingIndex < RING_SIZE));
 
-        // * Deklariere das Sample als ‘FIXATING’ am aktuellen Fixationsort.
+        // * Deklariere das Sample als â€˜FIXATINGâ€™ am aktuellen Fixationsort.
         stRingBuf[iDumRingIndex].iEyeMotionState := FIXATING;
         stRingBuf[iDumRingIndex].fXFix := stFix[PRES_FIX].fX;
         stRingBuf[iDumRingIndex].fYFix := stFix[PRES_FIX].fY;
@@ -371,56 +371,56 @@ begin
         stRingBuf[iDumRingIndex].fEllipsoidYaw := stFix[PRES_FIX].fEllipsoidYaw;
         stRingBuf[iDumRingIndex].fEllipsoidPitch := stFix[PRES_FIX].fEllipsoidPitch;
 
-        // * Setze den Ringpuffer-Eintrag für die Sakkadendauer, z.B. die Zeit zwischen Ende der
-        // * letzten Fixation bis zum Start der gegenwärtigen Fixation.
+        // * Setze den Ringpuffer-Eintrag fÃ¼r die Sakkadendauer, z.B. die Zeit zwischen Ende der
+        // * letzten Fixation bis zum Start der gegenwÃ¤rtigen Fixation.
         // * Beachte: Die Sakkadendauer ist bei allen Samples dieser Fixation die gleiche.
         stRingBuf[iDumRingIndex].iSacDuration := stFix[PRES_FIX].iStartCount - stFix[PREV_FIX].iEndCount - 1;
 
-        // * Setze den Ringpuffer-Eintrag für die Fixationsdauer, z.B. die Zeit zwischen
-        // * Start der gegenwärtigen Fixation und Zeit des Ringindexes.
-        // * Beachte: Die Fixationsdauer ändert sich! -> nimmt für frühere gespeicherte Punkte ab
+        // * Setze den Ringpuffer-Eintrag fÃ¼r die Fixationsdauer, z.B. die Zeit zwischen
+        // * Start der gegenwÃ¤rtigen Fixation und Zeit des Ringindexes.
+        // * Beachte: Die Fixationsdauer Ã¤ndert sich! -> nimmt fÃ¼r frÃ¼here gespeicherte Punkte ab
 
         stRingBuf[iDumRingIndex].iFixDuration := stFix[PRES_FIX].iEndCount - iRingPointOffset - stFix[PRES_FIX].iStartCount + 1;
       end;
 
-      // * Speichere das Fixationsende (Zahl) für den nächsten Aufruf dieser Funktion.
+      // * Speichere das Fixationsende (Zahl) fÃ¼r den nÃ¤chsten Aufruf dieser Funktion.
       siPreviousFixEndCount := stFix[PRES_FIX].iEndCount;
     end
 
-    // * Andererseits, wenn es nicht genügend gute Augensamples für die Erkennung einer Fixation gibt, …
+    // * Andererseits, wenn es nicht genÃ¼gend gute Augensamples fÃ¼r die Erkennung einer Fixation gibt, â€¦
     else // if (stFix[PRES_FIX].iNEyeFoundSamples < iMinimumFixSamples)
     begin
-      // * … lasse den Ringpuffer unverändert.
+      // * â€¦ lasse den Ringpuffer unverÃ¤ndert.
     end
   end
 
-  // * Andernerseits, falls die gegenwärtige Fixationshypothese vorher bestätigt wurde …
+  // * Andernerseits, falls die gegenwÃ¤rtige Fixationshypothese vorher bestÃ¤tigt wurde â€¦
   else 	// if (stFix[PRES_FIX].bFixationVerified == TRUE)
   begin
     // * Erweitere die Fixation innerhalb des Ringpuffers:
-    // * Markiere alle neuen Samples im Ringpuffer ab dem letzten guten Sample, inklusive aller ‚missed‘
-    // * oder ‚out‘ Punkte als 'fixierend' bzw. FIXATING.
+    // * Markiere alle neuen Samples im Ringpuffer ab dem letzten guten Sample, inklusive aller â€šmissedâ€˜
+    // * oder â€šoutâ€˜ Punkte als 'fixierend' bzw. FIXATING.
     // * Berechne die Anzahl neuer Samples seit  dem letzten guten Sample der aktuellen Fixation
     iNNewSamples := iDfCallCount - siPreviousFixEndCount;
 
-    // * Stelle sicher, dass die Anzahl der Samples nicht die Ringpuffergröße übersteigt.
+    // * Stelle sicher, dass die Anzahl der Samples nicht die RingpuffergrÃ¶ÃŸe Ã¼bersteigt.
     Assert(iNNewSamples > 0);
     Assert(iNNewSamples <= RING_SIZE);
     if (iNNewSamples > RING_SIZE) then
       iNNewSamples := RING_SIZE;
 
-     // * Gehe rückwärts durch den Ringpuffer, beginnend mit dem aktuellen Ringindex, um die Anzahl der Fixations-
+     // * Gehe rÃ¼ckwÃ¤rts durch den Ringpuffer, beginnend mit dem aktuellen Ringindex, um die Anzahl der Fixations-
      // * Samples.
     for iRingPointOffset := 0 to iNNewSamples - 1 do
     begin
-      // * Berechne den nächsten Ringindex (rückwärts).
+      // * Berechne den nÃ¤chsten Ringindex (rÃ¼ckwÃ¤rts).
       iDumRingIndex := iCurrentRingIndex - iRingPointOffset;
       if (iDumRingIndex < 0) then
         Inc(iDumRingIndex, RING_SIZE);
 
       Assert((iDumRingIndex >= 0) and (iDumRingIndex < RING_SIZE));
 
-      // * Deklariere das Sample als ‘FIXATING’ am aktuellen Fixationsort.
+      // * Deklariere das Sample als â€˜FIXATINGâ€™ am aktuellen Fixationsort.
       stRingBuf[iDumRingIndex].iEyeMotionState := FIXATING;
       stRingBuf[iDumRingIndex].fXFix := stFix[PRES_FIX].fX;
       stRingBuf[iDumRingIndex].fYFix := stFix[PRES_FIX].fY;
@@ -432,18 +432,18 @@ begin
       stRingBuf[iDumRingIndex].fEllipsoidYaw := stFix[PRES_FIX].fEllipsoidYaw;
       stRingBuf[iDumRingIndex].fEllipsoidPitch := stFix[PRES_FIX].fEllipsoidPitch;
 
-      // * Setze den Ringpuffer-Eintrag für die Sakkadendauer, z.B. die Zeit zwischen Ende der
-      // * letzten Fixation bis zum Start der gegenwärtigen Fixation.
+      // * Setze den Ringpuffer-Eintrag fÃ¼r die Sakkadendauer, z.B. die Zeit zwischen Ende der
+      // * letzten Fixation bis zum Start der gegenwÃ¤rtigen Fixation.
       // * Beachte: Die Sakkadendauer ist bei allen Samples dieser Fixation die gleiche.
       stRingBuf[iDumRingIndex].iSacDuration := stFix[PRES_FIX].iStartCount - stFix[PREV_FIX].iEndCount - 1;
 
-      // * Setze den Ringpuffer-Eintrag für die Fixationsdauer, z.B. die Zeit zwischen
-      // * Start der gegenwärtigen Fixation und Zeit des Ringindexes.
-      // * Beachte: Die Fixationsdauer ändert sich! -> nimmt für frühere gespeicherte Punkte ab
+      // * Setze den Ringpuffer-Eintrag fÃ¼r die Fixationsdauer, z.B. die Zeit zwischen
+      // * Start der gegenwÃ¤rtigen Fixation und Zeit des Ringindexes.
+      // * Beachte: Die Fixationsdauer Ã¤ndert sich! -> nimmt fÃ¼r frÃ¼here gespeicherte Punkte ab
       stRingBuf[iDumRingIndex].iFixDuration := stFix[PRES_FIX].iEndCount - iRingPointOffset - stFix[PRES_FIX].iStartCount + 1;
     end;
 
-    // * Speichere das Fixationsende (Zahl) für den nächsten Aufruf dieser Funktion.
+    // * Speichere das Fixationsende (Zahl) fÃ¼r den nÃ¤chsten Aufruf dieser Funktion.
     siPreviousFixEndCount := stFix[PRES_FIX].iEndCount;
   end;
 end;
@@ -451,10 +451,10 @@ end;
 
 
 procedure TFixFuncClass3dCalcByEllipsoid.UpdateFixationHypothesis(iNewPresOrPrev: Integer;  fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad: Single; iMinimumFixSamples: Integer);
-// * Diese Funktion erweitert die iNewPresOrPrev-Fixation um einen neuen Blickort -> beides Übergabeparameter
-// * und prüft, ob genug Samples vorhanden sind, um zu erkennen, dass das Auge in diesem Moment fixiert.
-// * Falls dem so ist, deklariere die betreffenden Ringpuffereinträge als zur Fixation zugehörig.
-// * Die Funktion stellt auch sicher, dass es keine Hypothese für eine neue Fixation gibt.
+// * Diese Funktion erweitert die iNewPresOrPrev-Fixation um einen neuen Blickort -> beides Ãœbergabeparameter
+// * und prÃ¼ft, ob genug Samples vorhanden sind, um zu erkennen, dass das Auge in diesem Moment fixiert.
+// * Falls dem so ist, deklariere die betreffenden RingpuffereintrÃ¤ge als zur Fixation zugehÃ¶rig.
+// * Die Funktion stellt auch sicher, dass es keine Hypothese fÃ¼r eine neue Fixation gibt.
 
 begin
   // * Erweiterung der Fixation um den neuen Blickpunkt.
@@ -471,19 +471,19 @@ begin
   // * Berechnung der neuen Ellipsoidenparameter
   CalcEllipsoid(fXLeftEye,fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye,stFix[iNewPresOrPrev].fX, stFix[iNewPresOrPrev].fY, stFix[iNewPresOrPrev].fZ, fAccuracyAngleRad, stFix[iNewPresOrPrev].fXEllipsoidR, stFix[iNewPresOrPrev].fYEllipsoidR, stFix[iNewPresOrPrev].fZEllipsoidR, stFix[iNewPresOrPrev].fEllipsoidYaw, stFix[iNewPresOrPrev].fEllipsoidPitch);
 
-  // * Falls es sich um die gegenwärtige Fixation handelt, …
+  // * Falls es sich um die gegenwÃ¤rtige Fixation handelt, â€¦
   if (iNewPresOrPrev = PRES_FIX) then
   begin
 
-    // * … lösche die Anzahl aufeinanderfolgender Blickpunkte, die außerhalb des aktuellen
+    // * â€¦ lÃ¶sche die Anzahl aufeinanderfolgender Blickpunkte, die auÃŸerhalb des aktuellen
     // * Fixations-Akzeptanzbereiches lagen.
     iNOutsidePresEllipsoid := 0;
 
-    // * Teste, ob es genug Samples in der gegenwärtigen Fixations-Hypothese zur Erkennung einer Fixation gibt.
-    // * Falls dem so ist, deklariere die betreffenden Ringpuffereinträge als zur Fixation zugehörig.
+    // * Teste, ob es genug Samples in der gegenwÃ¤rtigen Fixations-Hypothese zur Erkennung einer Fixation gibt.
+    // * Falls dem so ist, deklariere die betreffenden RingpuffereintrÃ¤ge als zur Fixation zugehÃ¶rig.
     TestPresFixHypAndUpdateRingBuffer(iMinimumFixSamples);
 
-    // * Stelle sicher, dass es keine Hypothese für eine neue Fixation gibt.
+    // * Stelle sicher, dass es keine Hypothese fÃ¼r eine neue Fixation gibt.
     ResetFixationHypothesis(NEW_FIX);
 
   end;
@@ -491,7 +491,7 @@ end;
 
 
 procedure TFixFuncClass3dCalcByEllipsoid.StartFixationHypothesisAtGazepoint(iNewPresOrPrev: Integer; fXGaze, fYGaze, fZGaze: Single);
-// * Diese Funktion startet die Fixation (NewPresPrev) am Blickort (beides Übergabewerte) und stellt sicher,
+// * Diese Funktion startet die Fixation (NewPresPrev) am Blickort (beides Ãœbergabewerte) und stellt sicher,
 // * dass es keine neue Fixations-Hypothese gibt.
 
 begin
@@ -515,14 +515,14 @@ begin
   stFix[iNewPresOrPrev].iEndCount := iDfCallCount;
   stFix[iNewPresOrPrev].bFixationVerified := FALSE;
 
-  // * Falls es sich um die gegenwärtige Fixation handelt …
+  // * Falls es sich um die gegenwÃ¤rtige Fixation handelt â€¦
   if (iNewPresOrPrev = PRES_FIX) then
   begin
-    // * … lösche die Anzahl aufeinanderfolgender Blickpunkte, die außerhalb des aktuellen
+    // * â€¦ lÃ¶sche die Anzahl aufeinanderfolgender Blickpunkte, die auÃŸerhalb des aktuellen
     // * Fixations-Akzeptanzbereiches lagen.
     iNOutsidePresEllipsoid := 0;
 
-    // *    Stelle sicher, dass es keine Hypothese für eine neue Fixation gibt.
+    // *    Stelle sicher, dass es keine Hypothese fÃ¼r eine neue Fixation gibt.
     ResetFixationHypothesis(NEW_FIX);
   end;
 end;
@@ -530,17 +530,17 @@ end;
 
 
 procedure TFixFuncClass3dCalcByEllipsoid.MoveNewFixToPresFix;
-// * Diese Funktion kopiert die neuen Fixationsdaten in die gegenwärtige Fixation und löscht die neue Fixations-Hypothese
+// * Diese Funktion kopiert die neuen Fixationsdaten in die gegenwÃ¤rtige Fixation und lÃ¶scht die neue Fixations-Hypothese
 
 begin
-   // * Lösche die Anzahl aufeinanderfolgender Blickpunkte, die außerhalb des aktuellen
+   // * LÃ¶sche die Anzahl aufeinanderfolgender Blickpunkte, die auÃŸerhalb des aktuellen
    // * Fixations-Akzeptanzbereiches liegen.
    iNOutsidePresEllipsoid := 0;
 
-   // * Erklärt die neue Fixations-Hypothese zur gegenwärtigen Fixations-Hypothese.
+   // * ErklÃ¤rt die neue Fixations-Hypothese zur gegenwÃ¤rtigen Fixations-Hypothese.
    stFix[PRES_FIX] := stFix[NEW_FIX];
 
-   // * Löscht NEW_FIX.
+   // * LÃ¶scht NEW_FIX.
    ResetFixationHypothesis(NEW_FIX);
 end;
 
@@ -566,7 +566,7 @@ begin
   R:=round(sqrt(sqr(XCycl-fXEllipsoidCenter)+sqr(YCycl-fYEllipsoidCenter)+sqr(ZCycl-fZEllipsoidCenter)));
 
 
-  // Parameter der Ellipsoiden Fixationshülle
+  // Parameter der Ellipsoiden FixationshÃ¼lle
   fXEllipsoidR:=R*fAccuracyAngleRad;
   fYEllipsoidR:=R*fAccuracyAngleRad;
   FZEllipsoidR:=fXEllipsoidR*(R/D);
@@ -581,12 +581,12 @@ end;
 
 procedure TFixFuncClass3dCalcByEllipsoid.DeclarePresentFixationComplete(iMinimumFixSamples:Integer);
 // * Diese Funktion:
-// * 	a) erklärt die aktuelle Fixation für beendet bei stFix[PRES_FIX].iEndCount.
-// * 	b) erklärt die gegenwärtige Fixation zur vorhergehenden Fixation und
-// * 	c) erklärt die neue Fixation, falls vorhanden zur gegenwärtigen Fixation.
+// * 	a) erklÃ¤rt die aktuelle Fixation fÃ¼r beendet bei stFix[PRES_FIX].iEndCount.
+// * 	b) erklÃ¤rt die gegenwÃ¤rtige Fixation zur vorhergehenden Fixation und
+// * 	c) erklÃ¤rt die neue Fixation, falls vorhanden zur gegenwÃ¤rtigen Fixation.
 
 var
-  iRingIndexLastFixSample:Integer;	//* Ringindex des letzten Samples der gegenwärtigen kompletten Fixation
+  iRingIndexLastFixSample:Integer;	//* Ringindex des letzten Samples der gegenwÃ¤rtigen kompletten Fixation
   iDoneNSamplesAgo:Integer;
 
 begin
@@ -597,7 +597,7 @@ begin
    if (iDoneNSamplesAgo > iMinimumFixSamples) then
        iDoneNSamplesAgo := iMinimumFixSamples;
 
-   //* Berechne den Ringindex, der korrespondierend mit der zugehörigen Fertigstellungszeit der Fixation.
+   //* Berechne den Ringindex, der korrespondierend mit der zugehÃ¶rigen Fertigstellungszeit der Fixation.
    iRingIndexLastFixSample := iCurrentRingIndex - iDoneNSamplesAgo;
    if (iRingIndexLastFixSample < 0) then
        Inc(iRingIndexLastFixSample, RING_SIZE);
@@ -605,14 +605,14 @@ begin
    Assert(iRingIndexLastFixSample >= 0);
    Assert(iRingIndexLastFixSample < RING_SIZE);
 
-   //*  Erkläre die gegenwärtige Fixation für beendet.
+   //*  ErklÃ¤re die gegenwÃ¤rtige Fixation fÃ¼r beendet.
    stRingBuf[iRingIndexLastFixSample].iEyeMotionState := FIXATION_COMPLETED;
 
-   //* Erkläre die gegenwärtige Fixation zur vorhergehenden Fixation
+   //* ErklÃ¤re die gegenwÃ¤rtige Fixation zur vorhergehenden Fixation
    stFix[PREV_FIX] := stFix[PRES_FIX];
 
-   //* Erkläre die Daten der neuen Fixation, falls vorhanden, zur gegenwärtigen Fixation, lösche die neue Fixation
-   //* und prüfe, ob es genug Samples in der neuen Fixation (jetzt die gegenwärtige) gibt, um zu prüfen, ob das Auge
+   //* ErklÃ¤re die Daten der neuen Fixation, falls vorhanden, zur gegenwÃ¤rtigen Fixation, lÃ¶sche die neue Fixation
+   //* und prÃ¼fe, ob es genug Samples in der neuen Fixation (jetzt die gegenwÃ¤rtige) gibt, um zu prÃ¼fen, ob das Auge
    //* aktuell fixiert.
    MoveNewFixToPresFix();
 end;
@@ -625,12 +625,12 @@ procedure TFixFuncClass3dCalcByEllipsoid.InitFixation(iMinimumFixSamples: Intege
 // * InitFixation() sollte vor DetectFixation() aufgerufen werden.
 
 begin
-  // * Setze die maximal mögliche Anzahl aufeinanderfolgender Samples,
-  // * die innerhalb einer Fixation ‚ungetrackt‘ bleiben dürfen.
+  // * Setze die maximal mÃ¶gliche Anzahl aufeinanderfolgender Samples,
+  // * die innerhalb einer Fixation â€šungetracktâ€˜ bleiben dÃ¼rfen.
   iMaxMissedSamples := 3;
 
-  // * Setze die maximal mögliche Anzahl aufeinanderfolgender Samples,
-  // * die außerhalb des Fixations-Akzeptanzbereiches liegen dürfen.
+  // * Setze die maximal mÃ¶gliche Anzahl aufeinanderfolgender Samples,
+  // * die auÃŸerhalb des Fixations-Akzeptanzbereiches liegen dÃ¼rfen.
   iMaxOutSamples := 1;
 
   // * Initialisiere den internen Ringpuffer
@@ -665,15 +665,15 @@ begin
   iRingIndexDelay := RING_SIZE - iMinimumFixSamples;
 
   // * Setze die Anzahl der Aufrufe von DetectFixation() seit Initialisierung auf 0 und
-  // * initialisiere die Zählvariable für das vorhergehende Fixationsende.
+  // * initialisiere die ZÃ¤hlvariable fÃ¼r das vorhergehende Fixationsende.
   // * Dadurch wird die erste Sakkadendauer  eine legitime Zahl.
   iDfCallCount := 0;
   stFix[PREV_FIX].iEndCount := 0;
 
-  // * Lösche die gegenwärtigen Fixationsdaten.
+  // * LÃ¶sche die gegenwÃ¤rtigen Fixationsdaten.
   ResetFixationHypothesis(PRES_FIX);
 
-  // * Lösche die neuen Fixationsdaten.
+  // * LÃ¶sche die neuen Fixationsdaten.
   ResetFixationHypothesis(NEW_FIX);
 end;
 
@@ -682,8 +682,8 @@ end;
 function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
 
                                           // * INPUT PARAMETER:
-                                          bValidSample: Integer; 		          // *  Indikator, ob der bildverarbeitende Algorithmus gültige Blickdaten
-                                                                              // *  für beide Augen gefunden hat  (0=FALSE, 1=TRUE)
+                                          bGazepointFound: Integer; 		      // *  Indikator, ob der bildverarbeitende Algorithmus gÃ¼ltige Blickpunkte
+                                                                              // *  fÃ¼r beide Augen gefunden hat  (0=FALSE, 1=TRUE)
 
                                           fXLeftEye: Single;                  // *  Koordinaten linkes Auge
                                           fYLeftEye: Single;
@@ -693,27 +693,27 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
                                           fYRightEye: Single;
                                           fZRightEye: Single;
 
-                                          fXGaze: Single; 				            // *  aktueller 3D-Blickort
+                                          fXGaze: Single; 				            // *  aktueller Blickort
                                           fYGaze: Single;
                                           fZGaze: Single;
 
-
-                                                                                                                                                                   fAccuracyAngleRad: Single;          // *  Schwellwert für die Berechnung der ellipsoiden Fixationshülle
+                                          fAccuracyAngleRad: Single;          // *  Genauigkeit des Eyetracking Systems
 
                                           iMinimumFixSamples: Integer; 		    // *  minimale Anzahl an Gaze Samples, um eine Fixation zu erkennen.
-                                                                              // *  Beachte: Falls dieser Wert mit weniger als 3 beträgt,
+                                                                              // *  Beachte: Falls dieser Wert mit weniger als 3 betrÃ¤gt,
                                                                               // * 	         wird er automatisch auf 3 gesetzt.
 
-                                          // * OUTPUT PARAMETER: Verzögerte Blickortdaten mit Fixationsparametern
 
-                           out            pbValidSampleDelayed: Integer;      // * Indikator, ob das Sample iMinimumFixSamples zuvor gültig war
+                                          // * OUTPUT PARAMETER: VerzÃ¶gerte Blickortdaten mit Fixationsparametern
+
+                           out            pbGazepointFoundDelayed: Integer;   // * Indikator, ob ein Sample iMinimumFixSamples zuvor gefunden wurde.
 
                            out            pfXGazeDelayed,  		                // * Blickortkoordinaten - iMinimumFixSamples vorher
                                           pfYGazeDelayed,
                                           pfZGazeDelayed: Single;
 
-                                          // * Fixationsdaten - verzögert:
-                           out            pfXFixDelayed, 			                // * Fixationszentrum - iMinimumFixSamples vorher
+                                          // * Fixationsdaten - verzÃ¶gert:
+                           out            pfXFixDelayed, 			                // * geschÃ¤tzter Fixationsort - iMinimumFixSamples vorher
                                           pfYFixDelayed,
                                           pfZFixDelayed: Single;
 
@@ -725,20 +725,20 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
                            out            pfEllipsoidYawDelayed,              // *  yaw angle (Rotation der Fixation um die Y-Achse)
                                           pfEllipsoidPitchDelayed: Single;    // *  pitch angle (Rotation der Fixation um die X-Achse)
 
-                           out            piSacDurationDelayed, 	            // * Dauer der Sakkade, die der gegenwärtigen Fixation voranging (Samples)
-                                          piFixDurationDelayed: Integer): Integer; 	// * Dauer der gegenwärtigen Fixation (Samples)
+                           out            piSacDurationDelayed, 	            // * Dauer der Sakkade, die der gegenwÃ¤rtigen Fixation voranging (Samples)
+                                          piFixDurationDelayed: Integer): Integer; 	// * Dauer der gegenwÃ¤rtigen Fixation (Samples)
 
-// *  Rückgabewerte - Eye Motion State:
+// *  RÃ¼ckgabewerte - Eye Motion State:
 // *
 // *    MOVING			          0   Das Auge war in Bewegung, iMinimumFixSamples vorher.
 // *    FIXATING			        1   Das Auge fixierte, iMinimumFixSamples vorher.
 // *    FIXATION_COMPLETED   	2   Eine abgeschlossene Fixation wurde erkannt, iMinimumFixSamples vorher.
 // *
-// *	In Bezug auf das Sample, welches FIXATION_COMPLETED zurück gibt, startete die Fixation
+// *	In Bezug auf das Sample, welches FIXATION_COMPLETED zurÃ¼ck gibt, startete die Fixation
 // *	(iMinimumFixSamples + *piSaccadeDurationDelayed) vorher und endete iMinimumFixSamples vorher.
 // *
-// *	Beachte:  Dadurch, dass es eine Mess-Verzögerung anhand der Bildverarbeitungsprozesse gibt (ca. 2-Samples),
-// *            müssen die Start- und Endzeit in Bezug zur Echtzeit korrigiert werden.
+// *	Beachte:  Dadurch, dass es eine Mess-VerzÃ¶gerung anhand der Bildverarbeitungsprozesse gibt (ca. 2-Samples),
+// *            mÃ¼ssen die Start- und Endzeit in Bezug zur Echtzeit korrigiert werden.
 // *
 // *	Startzeit:  iMinimumFixSamples + *piSaccadeDurationDelayed + 2
 // *	Endzeit: 	  iMinimumFixSamples + 2
@@ -747,22 +747,22 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
 // *  Zusammenfassung
 // *  ===============
 // *
-// *  Diese Funktion konvertiert eine Serie gleichmäßig abgetasteter Blickpunkte in eine Serie von Sakkaden und Fixationen
+// *  Diese Funktion konvertiert eine Serie gleichmÃ¤ÃŸig abgetasteter Blickpunkte in eine Serie von Sakkaden und Fixationen
 // *  variabler Dauer.
 // *
-// *  Die Fixationserkennung kann in Echtzeit oder auch nachträglich erfolgen. Um die Fixationserkennung während der
-// *  Blickdatenaufzeichnung (Echtzeit) durchführen zu können, muss diese Funktion für jedes Sample aufgerufen werden.
+// *  Die Fixationserkennung kann in Echtzeit oder auch nachtrÃ¤glich erfolgen. Um die Fixationserkennung wÃ¤hrend der
+// *  Blickdatenaufzeichnung (Echtzeit) durchfÃ¼hren zu kÃ¶nnen, muss diese Funktion fÃ¼r jedes Sample aufgerufen werden.
 // *
-// *  Falls das Auge in Bewegung ist, z.B. während einer Sakkade, gibt diese Funktion 0 (MOVING) zurück.
-// *  Falls das Auge stillsteht, z.B. während einer Fixation gibt die Funktion 1 (FIXATING)  zurück.
+// *  Falls das Auge in Bewegung ist, z.B. wÃ¤hrend einer Sakkade, gibt diese Funktion 0 (MOVING) zurÃ¼ck.
+// *  Falls das Auge stillsteht, z.B. wÃ¤hrend einer Fixation gibt die Funktion 1 (FIXATING)  zurÃ¼ck.
 // *  Falls eine abgeschlossene Fixation erkannt wird, gibt die Funktion 2 (FIXATION_COMPLETED) mit folgenden
-// *  Parametern zurück:
+// *  Parametern zurÃ¼ck:
 // *
-// *  	a) Die Sakkadendauer zwischen der letzten und gegenwärtigen Fixation (eyegaze samples)
-// *  	b) Die Dauer der gegenwärtigen, jetzt abgeschlossenen Fixation
+// *  	a) Die Sakkadendauer zwischen der letzten und gegenwÃ¤rtigen Fixation (eyegaze samples)
+// *  	b) Die Dauer der gegenwÃ¤rtigen, jetzt abgeschlossenen Fixation
 // *  	c) Die durchschnittlichen x- und y- Koordinaten der Fixation
 // *
-// *  Beachte: Obwohl diese Funktion  in Echtzeit arbeitet, gibt es eine Verzögerung von iMinimumFixSamples im Filter,
+// *  Beachte: Obwohl diese Funktion  in Echtzeit arbeitet, gibt es eine VerzÃ¶gerung von iMinimumFixSamples im Filter,
 // *  welcher die Bewegung/Fixation des Auges erkennt.
 // *
 // *
@@ -773,28 +773,28 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
 // *  am selben Ort verharren. Falls ein neu gemessener Blickort innerhalb eines Ellipsoiden um das Zentrum der
 // *  der stattfindenden Fixation liegt, wird die Fixation um den neuen Blickort erweitert. Die Dimension des
 // *  Akzeptanzbereiches bzw. Ellipsoiden wird vom Benutzer durch das Setzen des Funktionsargumentes fAccuracyAngle
-// *  vorgegeben. Dieser Winkel gibt die Genauigkeit der Messung in Abhängigkeit des verwendeten Eyetrackingsystems an und
+// *  vorgegeben. Dieser Winkel gibt die Genauigkeit der Messung in AbhÃ¤ngigkeit des verwendeten Eyetrackingsystems an und
 // *  variiert horzonzal bzw. vertikal weniger als in die Tiefe. Deshalb kann auch keine Kugel als dreidimensionaler
-// *  Fixationsköper angenommen werden. Der Ellipsoid wird durch den aktuellen Fixationsort, dem Genauigkeitswinkel der Messung
-// *  und der Aussrichtung zu den Augen des Probanden definiert. Für die Ausrichtung wird ein Zyklpenauge als Mittelpunkt zwischen
+// *  FixationskÃ¶per angenommen werden. Der Ellipsoid wird durch den aktuellen Fixationsort, dem Genauigkeitswinkel der Messung
+// *  und der Aussrichtung zu den Augen des Probanden definiert. FÃ¼r die Ausrichtung wird ein Zyklpenauge als Mittelpunkt zwischen
 // *  den dreidimensionalen Corneazentren des linken und rechten Auges angenommen und der Ellipsoid daran dreidimensional ausgerichtet.
 // *
-// *  Um Störungen in der Blickortmessungen zu berücksichtigen, wird ein einzelner Blickort, der die Abweichung in einer
-// *  laufenden Fixation überschreitet, ebenfalls in die Fixation aufgenommen, sofern das nachfolgende Sample wieder
+// *  Um StÃ¶rungen in der Blickortmessungen zu berÃ¼cksichtigen, wird ein einzelner Blickort, der die Abweichung in einer
+// *  laufenden Fixation Ã¼berschreitet, ebenfalls in die Fixation aufgenommen, sofern das nachfolgende Sample wieder
 // *  innerhalb des Akzeptanzbereiches dieser Fixation liegt.
 // *
-// *  Sollte kein Gültiger Blickort vorliegen (z.B. während eines Blinks), wird die die Fixation verlängert, falls:
+// *  Sollte kein GÃ¼ltiger Blickort vorliegen (z.B. wÃ¤hrend eines Blinks), wird die die Fixation verlÃ¤ngert, falls:
 // *
-// *	a) das nächste gültige Sample wieder innerhalb des Akzeptanzbereiches liegt,
+// *	a) das nÃ¤chste gÃ¼ltige Sample wieder innerhalb des Akzeptanzbereiches liegt,
 // *  b) es weniger als iMinimumFixSamples aufeinanderfolgender fehlender Blickorte gibt.
 // *
-// *  Andernfalls wird die Fixation an Stelle der letzten gültigen bzw. guten Messung beendet.
+// *  Andernfalls wird die Fixation an Stelle der letzten gÃ¼ltigen bzw. guten Messung beendet.
 // *
 // *
 // *  MASSEINHEITEN
 // *  =============
 // *
-// *  Die Blickpositionen/Blickrichtungen können in beliebigen Einheiten angegeben werden (z.B. mm, px, rd), jedoch muss
+// *  Die Blickpositionen/Blickrichtungen kÃ¶nnen in beliebigen Einheiten angegeben werden (z.B. mm, px, rd), jedoch muss
 // *  die Angabe der Filterwerte in denselben Einheiten erfolgen.
 // *
 // *
@@ -802,20 +802,20 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
 // *  ============================
 // *
 // *  Bevor Blickortsequenzen analysiert werden, sollte die InitFixation Funktion aufgerufen werden, um alle vorherigen,
-// *  gegenwärtigen und neuen Fixationsdaten zu löschen und die Ringpuffer mit den vorherigen Blickortdaten zu
+// *  gegenwÃ¤rtigen und neuen Fixationsdaten zu lÃ¶schen und die Ringpuffer mit den vorherigen Blickortdaten zu
 // *  initialisieren.
 // *
 // *
 // *  PROGRAMM-HINWEIWSE
 // *  ==================
 // *
-// *  Aus Dokumentationsgründen wird innerhalb einer Fixationssequenz die jeweiligen Fixationen als "previous",
+// *  Aus DokumentationsgrÃ¼nden wird innerhalb einer Fixationssequenz die jeweiligen Fixationen als "previous",
 // *  "present", und "new" bezeichnet.
 // *
-// *  Die „present“ Fixation ist die derzeitig ablaufende bzw. falls eine neue Fixation startet die bereits abgeschlossene.
-// *  Die „previous“ Fixation ist die unmittelbar der gegenwärtigen vorausgegangene und die „new“ Fixation die
-// *  unmittelbar folgende Fixation. Sobald die „present“ Fixation für beendet erklärt ist, wird die „present“ Fixation zur
-// *  „previous“ und die „new“ zur „present“. Eine neue Fixation gibt es bis jetzt noch nicht.
+// *  Die â€žpresentâ€œ Fixation ist die derzeitig ablaufende bzw. falls eine neue Fixation startet die bereits abgeschlossene.
+// *  Die â€žpreviousâ€œ Fixation ist die unmittelbar der gegenwÃ¤rtigen vorausgegangene und die â€žnewâ€œ Fixation die
+// *  unmittelbar folgende Fixation. Sobald die â€žpresentâ€œ Fixation fÃ¼r beendet erklÃ¤rt ist, wird die â€žpresentâ€œ Fixation zur
+// *  â€žpreviousâ€œ und die â€žnewâ€œ zur â€žpresentâ€œ. Eine neue Fixation gibt es bis jetzt noch nicht.
 // *
 // *--------------------------------------------------------------------------------------------------------------------------*/
 
@@ -826,14 +826,14 @@ var
   i: Integer;
 begin
 
-  // * Stelle sicher, dass die minimale Anzahl an Samples zur Erkennung einer Fixation 3 beträgt.
+  // * Stelle sicher, dass die minimale Anzahl an Samples zur Erkennung einer Fixation 3 betrÃ¤gt.
   if (iMinimumFixSamples < 3) then
     iMinimumFixSamples := 3;
 
-  // * Stelle sicher, dass die Ring-Größe groß genug für die Pufferung der Daten ist.
+  // * Stelle sicher, dass die Ring-GrÃ¶ÃŸe groÃŸ genug fÃ¼r die Pufferung der Daten ist.
   Assert(iMinimumFixSamples < RING_SIZE);
 
-  // * Erhöhe den Aufrufzähler, den Ringindex und den Ringindex-Versatz.
+  // * ErhÃ¶he den AufrufzÃ¤hler, den Ringindex und den Ringindex-Versatz.
   Inc(iDfCallCount);
   iPastRingIndex := iCurrentRingIndex;
   Inc(iCurrentRingIndex);
@@ -852,10 +852,10 @@ begin
   stRingBuf[iCurrentRingIndex].fYGaze := fYGaze;
   stRingBuf[iCurrentRingIndex].fZGaze := fZGaze;
 
-  stRingBuf[iCurrentRingIndex].bGazeFound := bValidSample;
+  stRingBuf[iCurrentRingIndex].bGazeFound := bGazepointFound;
 
-  // * Zunächst nehme an, dass sich das Auge bewegt.
-  // * Hinweis: Diese Werte werden während der weiteren Verarbeitung dieses und der folgenden Blickorte aktualisiert.
+  // * ZunÃ¤chst nehme an, dass sich das Auge bewegt.
+  // * Hinweis: Diese Werte werden wÃ¤hrend der weiteren Verarbeitung dieses und der folgenden Blickorte aktualisiert.
 
   stRingBuf[iCurrentRingIndex].iEyeMotionState := MOVING;
 
@@ -872,71 +872,71 @@ begin
 
   stRingBuf[iCurrentRingIndex].iFixDuration := 0;
 
-  // * Der folgende Code erhöht die Sakkadendauer während nicht fixierender Perioden.
-  // * Falls das Auge bereits im letzten Sample in Bewegung war, …
+  // * Der folgende Code erhÃ¶ht die Sakkadendauer wÃ¤hrend nicht fixierender Perioden.
+  // * Falls das Auge bereits im letzten Sample in Bewegung war, â€¦
   if (stRingBuf[iPastRingIndex].iEyeMotionState = MOVING) then
   begin
-    // * … erhöhe den Sakkadenzähler des letzten Samples.
+    // * â€¦ erhÃ¶he den SakkadenzÃ¤hler des letzten Samples.
     stRingBuf[iCurrentRingIndex].iSacDuration := stRingBuf[iPastRingIndex].iSacDuration + 1;
   end
-  // * Andererseits, falls das Auge während des letzten Samples Fixiert hat, …
+  // * Andererseits, falls das Auge wÃ¤hrend des letzten Samples Fixiert hat, â€¦
   else
   begin
-    // * … setze den Sakkadenzähler auf 1, initialisiere das Sample in der Annahme, dass es sich um das erste Sample einer
+    // * â€¦ setze den SakkadenzÃ¤hler auf 1, initialisiere das Sample in der Annahme, dass es sich um das erste Sample einer
     // * beginnenden Sakkade handelt.
     stRingBuf[iCurrentRingIndex].iSacDuration := 1;
   end;
 
-  // *- - - - - - - - - - - - - Prozess für getrackte Augen - - - - - - - - - - - - - -*/
+  // *- - - - - - - - - - - - - Prozess fÃ¼r getrackte Augen - - - - - - - - - - - - - -*/
 
-  // * A) Falls das Sample einen gültigen Blickort enthält, …
-  if (bValidSample = TRUE) then
+  // * A) Falls das Sample einen gÃ¼ltigen Blickort enthÃ¤lt, â€¦
+  if (bGazepointFound = TRUE) then
   begin
-    // * A1 B) Falls eine Fixationshypothese für die gegenwärtige Fixation existiert
+    // * A1 B) Falls eine Fixationshypothese fÃ¼r die gegenwÃ¤rtige Fixation existiert
     if (stFix[PRES_FIX].iNEyeFoundSamples > 0) then
     begin
-      // *       B1) Berechne den Abstand zwischen Blickort und gegenwärtiger Fixation und prüfe, ob sich der Blickort innerhalb des Akzeptanzbereiches liegt.
+      // *       B1) Berechne den Abstand zwischen Blickort und gegenwÃ¤rtiger Fixation und prÃ¼fe, ob sich der Blickort innerhalb des Akzeptanzbereiches liegt.
       bGazeInPresFix := IsGazeInFix(PRES_FIX, fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad);
 
-      // *       C) Falls der Blickort innerhalb des Akzeptanzbereiches liegt, …
+      // *       C) Falls der Blickort innerhalb des Akzeptanzbereiches liegt, â€¦
       if bGazeInPresFix=TRUE then
       begin
-        // *          C1) - Aktualisiere die Fixaionshypothese der gegenwärtigen Fixation
-        // *              - prüfe, ob die gegenwärtige Fixation real ist, und falls ja,
-        // *              - kennzeichne die vorangegangenen Einträge im Ringpuffer als Fixationspunkte.
+        // *          C1) - Aktualisiere die Fixaionshypothese der gegenwÃ¤rtigen Fixation
+        // *              - prÃ¼fe, ob die gegenwÃ¤rtige Fixation real ist, und falls ja,
+        // *              - kennzeichne die vorangegangenen EintrÃ¤ge im Ringpuffer als Fixationspunkte.
         UpdateFixationHypothesis(PRES_FIX, fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad, iMinimumFixSamples);
       end
 
-      // *       Falls der neue Blickort außerhalb des Aktzeptanzbereiches liegt …
+      // *       Falls der neue Blickort auÃŸerhalb des Aktzeptanzbereiches liegt â€¦
       else // if bGazeInPresFix=FALSE
       begin
-        // *          C2) Erhöhe den Zähler für aufeinanderfolgende Samples außerhalb des Akzeptanzbereiches.
+        // *          C2) ErhÃ¶he den ZÃ¤hler fÃ¼r aufeinanderfolgende Samples auÃŸerhalb des Akzeptanzbereiches.
         Inc(iNOutsidePresEllipsoid);
 
-        // *          D) Falls die Anzahl aufeinanderfolgender Samples außerhalb liegender Punkte das Maximum NICHT übersteigt, …
+        // *          D) Falls die Anzahl aufeinanderfolgender Samples auÃŸerhalb liegender Punkte das Maximum NICHT Ã¼bersteigt, â€¦
         if (iNOutsidePresEllipsoid <= iMaxOutSamples) then
         begin
           // *             D1) Nimm den Blickort in die NEUE Fixationshypothese (NEW_FIXATION) auf.
-          // *             	    E)     Falls diese neue Fixationshypothese bereits gestartet wurde, …
+          // *             	    E)     Falls diese neue Fixationshypothese bereits gestartet wurde, â€¦
           if (stFix[NEW_FIX].iNEyeFoundSamples > 0) then
           begin
-            // *                   E1) … berechne den Blickortabstand zur neuen Fixation.
+            // *                   E1) â€¦ berechne den Blickortabstand zur neuen Fixation.
             bGazeInNewFix := IsGazeInFix(NEW_FIX, fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad);
 
-            // *                   F) Falls der neue Blickort in die neue Fixation fällt, …
+            // *                   F) Falls der neue Blickort in die neue Fixation fÃ¤llt, â€¦
             if bGazeInNewFix=TRUE then
             begin
               // *                      F1) 	- Aktualisiere die Fixationhypothese der NEW_FIXATION und
-              // *                      	    - überprüfe, ob es dort genügend Samples gibt, um das Auge als ‘fixierend’ zu deklarieren, und
-              // *                            - falls dem so ist, kennzeichne die vorangegangenen Einträge im Ringpuffer als
+              // *                      	    - Ã¼berprÃ¼fe, ob es dort genÃ¼gend Samples gibt, um das Auge als â€˜fixierendâ€™ zu deklarieren, und
+              // *                            - falls dem so ist, kennzeichne die vorangegangenen EintrÃ¤ge im Ringpuffer als
               // *                              Fixationspunkte.
               UpdateFixationHypothesis(NEW_FIX, fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad, iMinimumFixSamples);
             end
 
-            // *   Falls der neue Blickort auch außerhalb der neuen Fixation liegt, …
+            // *   Falls der neue Blickort auch auÃŸerhalb der neuen Fixation liegt, â€¦
             else // if (fNewDr > fGazeDeviationThreshold)
             begin
-              // *                       F2) Setze die neue Fixation auf diesen neuen Blickort zurück.
+              // *                       F2) Setze die neue Fixation auf diesen neuen Blickort zurÃ¼ck.
               StartFixationHypothesisAtGazepoint(NEW_FIX, fXGaze, fYGaze, fZGaze);
             end;
           end
@@ -949,20 +949,20 @@ begin
           end;
         end
 
-        // *   Falls zu viele aufeinanderfolgende Samples außerhalb des Akzeptanzbereiches liegen, …
+        // *   Falls zu viele aufeinanderfolgende Samples auÃŸerhalb des Akzeptanzbereiches liegen, â€¦
         else // if (iNOutsidePresCircle > iMaxOutSamples)
         begin
           // *             D2) muss die Fixationshypothese der PRES_FIXATION als abgeschlossen oder abgelehnt deklariert werden.
-          // *             G) Falls diese bestätigt werden kann, …
+          // *             G) Falls diese bestÃ¤tigt werden kann, â€¦
           if (stFix[PRES_FIX].bFixationVerified = TRUE) then
           begin
-            // *                G1) - Erkläre die PRES_FIX am letzten guten Sample als abgeschlossen,
-            // *                    - Erkläre die PRES_FIX zur PREV_FIX und die
+            // *                G1) - ErklÃ¤re die PRES_FIX am letzten guten Sample als abgeschlossen,
+            // *                    - ErklÃ¤re die PRES_FIX zur PREV_FIX und die
             // *                    - die NEW_FIX zur PRES_FIX
             DeclarePresentFixationComplete(iMinimumFixSamples);
           end
 
-          // *   Falls es nicht genügend gute Samples zur Bestimmung einer Fixation gibt,
+          // *   Falls es nicht genÃ¼gend gute Samples zur Bestimmung einer Fixation gibt,
           else // if (stFix[PRES_FIX].bFixationVerified == FALSE)
           begin
             // *                G2) Verwerfe die Fixationshypothese der PRES_FIX, in dem diese durch die neue Fixation NEW_FIX
@@ -970,74 +970,74 @@ begin
             MoveNewFixToPresFix();
           end;
 
-          // *             H) Falls es eine Fixationshypothese für PRES_FIX gibt, …
+          // *             H) Falls es eine Fixationshypothese fÃ¼r PRES_FIX gibt, â€¦
           if (stFix[PRES_FIX].iNEyeFoundSamples > 0) then
           begin
             // *                H1) Berechne den Abstand des Blickortes zur jetzt neuen PRES_FIXATION (kurz vorher noch NEW_FIX).
             bGazeInPresFix := IsGazeInFix(PRES_FIX, fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad);
 
-            // *                I) Falls der Blickort innerhalb des Akzeptanzbereiches der jetzt neuen  PRES_FIX liegt, …
+            // *                I) Falls der Blickort innerhalb des Akzeptanzbereiches der jetzt neuen  PRES_FIX liegt, â€¦
             if bGazeInPresFix = TRUE then
             begin
               // *                   I1) - Aktualisiere PRES_FIX,
-              // *                        - überprüfe, ob es dort genügend Samples gibt, um das Auge als ‘fixierend’ zu deklarieren, und
-              // *                        - falls dem so ist, kennzeichne die vorangegangenen Einträge im Ringpuffer als
+              // *                        - Ã¼berprÃ¼fe, ob es dort genÃ¼gend Samples gibt, um das Auge als â€˜fixierendâ€™ zu deklarieren, und
+              // *                        - falls dem so ist, kennzeichne die vorangegangenen EintrÃ¤ge im Ringpuffer als
               // *                          Fixationspunkte.
               UpdateFixationHypothesis(PRES_FIX, fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad, iMinimumFixSamples);
             end
 
-            // * Andernfalls, falls der Blickort außerhalb des Akzeptanzbereiches liegt, …
+            // * Andernfalls, falls der Blickort auÃŸerhalb des Akzeptanzbereiches liegt, â€¦
             else // if (fPresDr > fGazeDeviationThreshold)
             begin
-              // *                   I2) Starte eine neue Fixationshypothese für NEW_FIX an diesem Blickort.
+              // *                   I2) Starte eine neue Fixationshypothese fÃ¼r NEW_FIX an diesem Blickort.
               StartFixationHypothesisAtGazepoint(NEW_FIX, fXGaze, fYGaze, fZGaze);
             end;
           end
 
-          // * Andernfalls, falls es keine Fixationshypothese für PRES_FIX gibt, …
+          // * Andernfalls, falls es keine Fixationshypothese fÃ¼r PRES_FIX gibt, â€¦
           else // if (stFix[PRES_FIX].iNEyeFoundSamples == 0)
           begin
-            // *                H2) Starte eine neue Fixationshypothese für  PRES_FIX an diesem Blickort.
+            // *                H2) Starte eine neue Fixationshypothese fÃ¼r  PRES_FIX an diesem Blickort.
             StartFixationHypothesisAtGazepoint(PRES_FIX, fXGaze, fYGaze, fZGaze);
           end;
         end;
       end;
     end
 
-    // * Andernfalls, falls es keine Fixationshypothese für PRES_FIX gibt, …
+    // * Andernfalls, falls es keine Fixationshypothese fÃ¼r PRES_FIX gibt, â€¦
     else // if (stFix[PRES_FIX].iNEyeFoundSamples == 0)
     begin
-      // *       B2) Starte eine neue Fixationshypothese für  PRES_FIX an diesem Blickort und lösche die für NEW_FIX
+      // *       B2) Starte eine neue Fixationshypothese fÃ¼r  PRES_FIX an diesem Blickort und lÃ¶sche die fÃ¼r NEW_FIX
       StartFixationHypothesisAtGazepoint(PRES_FIX, fXGaze, fYGaze, fZGaze);
     end;
   end
 
-  // *- - - - - - - - - - - - - Prozess für NICHT getrackte Augen  - - - - - - - - - - - - -*/
+  // *- - - - - - - - - - - - - Prozess fÃ¼r NICHT getrackte Augen  - - - - - - - - - - - - -*/
 
-  // * Andernfalls, wenn das Sample keinen gültigen Blickort aufweist, …
+  // * Andernfalls, wenn das Sample keinen gÃ¼ltigen Blickort aufweist, â€¦
   else // if (bGazepointFound == FALSE)
   begin
-    // *    A2 J) Falls der Ausfall noch innerhalb der zulässingen Grenzen liegt, z.B. innerhalb des Zeitfenster für maximal
-    // *          ungültige Samples liegt, …
+    // *    A2 J) Falls der Ausfall noch innerhalb der zulÃ¤ssingen Grenzen liegt, z.B. innerhalb des Zeitfenster fÃ¼r maximal
+    // *          ungÃ¼ltige Samples liegt, â€¦
     if (iDfCallCount - stFix[PRES_FIX].iEndCount <= iMaxMissedSamples) then
     begin
-      // *       J1) … brauch hier NICHTS unternommen werden.
+      // *       J1) â€¦ brauch hier NICHTS unternommen werden.
     end
 
-    // *    Andernfalls, wenn die Ausfalllücke zum letzten guten Sample zu groß ist, …
+    // *    Andernfalls, wenn die AusfalllÃ¼cke zum letzten guten Sample zu groÃŸ ist, â€¦
     else // if (iDFCallCount - stFix[PRES_FIX].iEndCount > iMaxMissedSamples)
     begin
-      // *       J2) … muss die Fixationshypothese für PRES_FIX abgelehnt oder für abgeschlossen erklärt werden:
-      // *       K) Falls die Fixationshypothese bestätigt werden kann, …
+      // *       J2) â€¦ muss die Fixationshypothese fÃ¼r PRES_FIX abgelehnt oder fÃ¼r abgeschlossen erklÃ¤rt werden:
+      // *       K) Falls die Fixationshypothese bestÃ¤tigt werden kann, â€¦
       if (stFix[PRES_FIX].bFixationVerified = TRUE) then
       begin
-        // *          K1) - Erkläre die PRES_FIX am letzten guten Sample als abgeschlossen,
-        // *              - Erkläre die PRES_FIX zur PREV_FIX und die
+        // *          K1) - ErklÃ¤re die PRES_FIX am letzten guten Sample als abgeschlossen,
+        // *              - ErklÃ¤re die PRES_FIX zur PREV_FIX und die
         // *              - die NEW_FIX zur PRES_FIX
         DeclarePresentFixationComplete(iMinimumFixSamples);
       end
 
-      // * Andernfalls, wenn die Fixationshypothese für PRES_FIX nicht bestätig werden kann, …
+      // * Andernfalls, wenn die Fixationshypothese fÃ¼r PRES_FIX nicht bestÃ¤tig werden kann, â€¦
       else // if (stFix[PRES_FIX].bFixationVerified == FALSE)
       begin
         // *          K2) Verwerfe die Fixationshypothese der PRES_FIX, in dem diese durch die neue Fixation NEW_FIX
@@ -1051,10 +1051,10 @@ begin
 
   Assert((iRingIndexDelay >= 0) and (iRingIndexDelay < RING_SIZE));
 
-  // * Gib die verzögerten Blickortdaten, mit den entsprechenden Sakkaden-/Fixationsinformationen an die aufrufende
-  // * Funktion zurück (werden als Output-Parameter zurückgegeben).
+  // * Gib die verzÃ¶gerten Blickortdaten, mit den entsprechenden Sakkaden-/Fixationsinformationen an die aufrufende
+  // * Funktion zurÃ¼ck (werden als Output-Parameter zurÃ¼ckgegeben).
 
-  pbValidSampleDelayed := stRingBuf[iRingIndexDelay].bGazeFound;
+  pbGazepointFoundDelayed := stRingBuf[iRingIndexDelay].bGazeFound;
 
   pfXGazeDelayed := stRingBuf[iRingIndexDelay].fXGaze;
   pfYGazeDelayed := stRingBuf[iRingIndexDelay].fYGaze;
@@ -1074,7 +1074,7 @@ begin
   piSacDurationDelayed := stRingBuf[iRingIndexDelay].iSacDuration;
   piFixDurationDelayed := stRingBuf[iRingIndexDelay].iFixDuration;
 
-  // * Rückgabewert der Funktion als Bewegungs/Fixationsstatus (Eye Motion State) des VERZÖGERTEN Blickortes.
+  // * RÃ¼ckgabewert der Funktion als Bewegungs/Fixationsstatus (Eye Motion State) des VERZÃ–GERTEN Blickortes.
   Result := stRingBuf[iRingIndexDelay].iEyeMotionState;
 
   ///////////////////////////////////////////////////////////////////////////////
@@ -1096,43 +1096,43 @@ end;
 
 procedure TFixFuncClass3dCalcByEllipsoid.TestPresentFixationHypothesis(iMinimumFixSamples: Integer);
 
-// * Diese Funktion testet, ob es genügend Samples in der gegenwärtigen Fixationshypothese gibt, um das Auge als
-// * 'fixierend’ zu deklarieren. Falls eine Fixation läuft, aktualisiert die Funktion die entsprechenden momentanen und
-// * früheren Ringpuffereinträge, die zur Fixation gehören.
+// * Diese Funktion testet, ob es genÃ¼gend Samples in der gegenwÃ¤rtigen Fixationshypothese gibt, um das Auge als
+// * 'fixierendâ€™ zu deklarieren. Falls eine Fixation lÃ¤uft, aktualisiert die Funktion die entsprechenden momentanen und
+// * frÃ¼heren RingpuffereintrÃ¤ge, die zur Fixation gehÃ¶ren.
 
 var
   iEarlierPointOffset: Integer; 	// * Index-Offset zum jetzigen Ringpufferindex
   iDumRingIndex: Integer; 		    // * Dummy Ringindex
 
- // * Falls es genügend gültige Samples in der Fixationshypothese für PRES_FIX gibt, um eine reale Fixation zu bestimmen,
+ // * Falls es genÃ¼gend gÃ¼ltige Samples in der Fixationshypothese fÃ¼r PRES_FIX gibt, um eine reale Fixation zu bestimmen,
  // * ...
 begin
   if (stFix[PRES_FIX].iNEyeFoundSamples >= iMinimumFixSamples) then
   begin
-    // *    Deklariere das Auge als ‘fixierend’. Gehe rückwärts durch die letzten iMinimumFixSamples Einträge des
-    // *    Ringpuffers inklusive des aktuellen Punktes, …
+    // *    Deklariere das Auge als â€˜fixierendâ€™. Gehe rÃ¼ckwÃ¤rts durch die letzten iMinimumFixSamples EintrÃ¤ge des
+    // *    Ringpuffers inklusive des aktuellen Punktes, â€¦
     for iEarlierPointOffset := 0 to iMinimumFixSamples - 1 do
     begin
-      // *    Berechne den Ringindex des früheren Zeitpunktes
+      // *    Berechne den Ringindex des frÃ¼heren Zeitpunktes
       iDumRingIndex := iCurrentRingIndex - iEarlierPointOffset;
       if (iDumRingIndex < 0) then
         Inc(iDumRingIndex, RING_SIZE);
 
       Assert((iDumRingIndex >= 0) and (iDumRingIndex < RING_SIZE));
 
-      // *       Markiere den Punkt als ‘fixierend’ bzw. innerhalb der Fixation.
+      // *       Markiere den Punkt als â€˜fixierendâ€™ bzw. innerhalb der Fixation.
       stRingBuf[iDumRingIndex].iEyeMotionState := FIXATING;
       stRingBuf[iDumRingIndex].fXFix := stFix[PRES_FIX].fX;
       stRingBuf[iDumRingIndex].fYFix := stFix[PRES_FIX].fY;
       stRingBuf[iDumRingIndex].fZFix := stFix[PRES_FIX].fZ;
 
-      // *       Setze den Ringpuffereintrag für die Sakkadendauer.
-      // *       Hinweis: Diese ist für alle Punkte identisch.
+      // *       Setze den Ringpuffereintrag fÃ¼r die Sakkadendauer.
+      // *       Hinweis: Diese ist fÃ¼r alle Punkte identisch.
       stRingBuf[iDumRingIndex].iSacDuration := stFix[PRES_FIX].iStartCount - stFix[PREV_FIX].iEndCount - 1;
 
-      // *       Setze den Ringpuffereintrag für die Fixationsdauer, z.B. die Zeit zwischen Start der gegenwärtigen Fixation und
+      // *       Setze den Ringpuffereintrag fÃ¼r die Fixationsdauer, z.B. die Zeit zwischen Start der gegenwÃ¤rtigen Fixation und
       // *       die durch den Ringindex angegebene Zeit.
-      // *       Hinweis: Die Fixationsdauer verringert sich bei früher erfassten Punkten innerhalb der Fixation.
+      // *       Hinweis: Die Fixationsdauer verringert sich bei frÃ¼her erfassten Punkten innerhalb der Fixation.
       stRingBuf[iDumRingIndex].iFixDuration := stFix[PRES_FIX].iEndCount - iEarlierPointOffset - stFix[PRES_FIX].iStartCount + 1;
 
     end;

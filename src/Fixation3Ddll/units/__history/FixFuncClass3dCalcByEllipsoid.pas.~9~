@@ -175,7 +175,7 @@ type
                               iMinimumFixSamples: Integer;
 
                               // OUTPUT
-                 out          pbValidSampleDelayed: Integer;
+                 out          pbGazepointFoundDelayed: Integer;
 
                  out          pfXGazeDelayed,
                               pfYGazeDelayed,
@@ -697,23 +697,23 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
                                           fYGaze: Single;
                                           fZGaze: Single;
 
-
-                                                                                                                                                                   fAccuracyAngleRad: Single;          // *  Schwellwert für die Berechnung der ellipsoiden Fixationshülle
+                                          fAccuracyAngleRad: Single;          // *  Genauigkeit des Eyetracking Systems
 
                                           iMinimumFixSamples: Integer; 		    // *  minimale Anzahl an Gaze Samples, um eine Fixation zu erkennen.
                                                                               // *  Beachte: Falls dieser Wert mit weniger als 3 beträgt,
                                                                               // * 	         wird er automatisch auf 3 gesetzt.
 
+
                                           // * OUTPUT PARAMETER: Verzögerte Blickortdaten mit Fixationsparametern
 
-                           out            pbValidSampleDelayed: Integer;      // * Indikator, ob das Sample iMinimumFixSamples zuvor gültig war
+                           out            pbGazepointFoundDelayed: Integer;   // * Indikator, ob ein Sample iMinimumFixSamples zuvor gefunden wurde.
 
                            out            pfXGazeDelayed,  		                // * Blickortkoordinaten - iMinimumFixSamples vorher
                                           pfYGazeDelayed,
                                           pfZGazeDelayed: Single;
 
                                           // * Fixationsdaten - verzögert:
-                           out            pfXFixDelayed, 			                // * Fixationszentrum - iMinimumFixSamples vorher
+                           out            pfXFixDelayed, 			                // * geschätzter Fixationsort - iMinimumFixSamples vorher
                                           pfYFixDelayed,
                                           pfZFixDelayed: Single;
 
@@ -1054,7 +1054,7 @@ begin
   // * Gib die verzögerten Blickortdaten, mit den entsprechenden Sakkaden-/Fixationsinformationen an die aufrufende
   // * Funktion zurück (werden als Output-Parameter zurückgegeben).
 
-  pbValidSampleDelayed := stRingBuf[iRingIndexDelay].bGazeFound;
+  pbGazepointFoundDelayed := stRingBuf[iRingIndexDelay].bGazeFound;
 
   pfXGazeDelayed := stRingBuf[iRingIndexDelay].fXGaze;
   pfYGazeDelayed := stRingBuf[iRingIndexDelay].fYGaze;

@@ -13,7 +13,7 @@ library Fixation3D;
 uses
   SysUtils,
   Classes,
-  FixFuncClass3dCalcByEllipsoidWP in '..\3D Fixation Detection\lib\FixFuncClass3dCalcByEllipsoidWP.pas';
+  FixFuncClass3dCalcByEllipsoid in 'units\FixFuncClass3dCalcByEllipsoid.pas';
 
 {$R *.res}
 
@@ -21,17 +21,18 @@ var
     FFixFuncClass3dCalcByEllipsoid: TFixFuncClass3dCalcByEllipsoidWP;
 
 
-function addiere(zahl1, zahl2: integer): integer; stdcall;
+function Init3DFixation (iMinimumSamples: Integer): Integer; stdcall;
 begin
-  result:=zahl1+zahl2;
-end;
-
-
-procedure Init3DFixation (iMinimumSamples: Integer); stdcall;
-begin
-//  Sleep(200);
-  FFixFuncClass3dCalcByEllipsoid:=TFixFuncClass3dCalcByEllipsoidWP.Create;
-  FFixFuncClass3dCalcByEllipsoid.InitFixation(iMinimumSamples);
+  try
+    Result:=0;
+    FFixFuncClass3dCalcByEllipsoid:=TFixFuncClass3dCalcByEllipsoidWP.Create;
+    FFixFuncClass3dCalcByEllipsoid.InitFixation(iMinimumSamples);
+    if Assigned(FFixFuncClass3dCalcByEllipsoid)then
+      Result:=1;
+  except
+    on e:Exception do
+    raise Exception.CreateFmt('Calculate3DFixation: [%s]',[e.message]);
+  end;
 end;
 
 function Calculate3DFixation( bGazeVectorFound: Integer;
@@ -61,7 +62,13 @@ begin
   try
 
     //AlphaString:=Format('%1.1f',[fAccuracyAngle*57.3]);
-    fAccuracyAngleRad:=fAccuracyAngleRad/57.3;
+    //fAccuracyAngleRad:=fAccuracyAngleRad/57.3;
+
+
+    if not Assigned(FFixFuncClass3dCalcByEllipsoid)then
+      Result:=-1
+    else
+    begin
 
     EyeMotionState:=-1;
 
@@ -85,6 +92,9 @@ begin
 
     Result:=EyeMotionState;
 
+    end;
+
+
   except
     on e:Exception do
     raise Exception.CreateFmt('Calculate3DFixation: [%s]',[e.message]);
@@ -95,7 +105,6 @@ end;
 
 
 exports
-  addiere,
   Init3DFixation,
   Calculate3DFixation;
 

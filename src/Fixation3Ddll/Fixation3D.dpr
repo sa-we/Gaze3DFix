@@ -1,3 +1,21 @@
+//****************************************************************************************************************************************************
+//****************************************************************************************************************************************************
+//***
+//***
+//***       Fixation3D.dll - Dispersionsbasierte Erkennung dreidimensionaler Fixationen mit ellipsoiden Toleranzbereich
+//***       =========================================================================================================================
+//***
+//***       Datum:            20.05.2016
+//***       Entwickler:       Sascha Weber (sascha.weber@tu-dresden.de)
+//***
+//***       Beschreibung:     Diese Bibliothek kapselt die Funktionen aus FixFuncClass3dCalcByEllipsoid.
+//***
+//***
+//***
+//***
+//***
+
+
 library Fixation3D;
 
 { Important note about DLL memory management: ShareMem must be the
@@ -10,6 +28,9 @@ library Fixation3D;
   with your DLL. To avoid using BORLNDMM.DLL, pass string information
   using PChar or ShortString parameters. }
 
+
+
+
 uses
   SysUtils,
   Classes,
@@ -18,14 +39,14 @@ uses
 {$R *.res}
 
 var
-    FFixFuncClass3dCalcByEllipsoid: TFixFuncClass3dCalcByEllipsoidWP;
+    FFixFuncClass3dCalcByEllipsoid: TFixFuncClass3dCalcByEllipsoid;
 
 
 function Init3DFixation (iMinimumSamples: Integer): Integer; stdcall;
 begin
   try
     Result:=0;
-    FFixFuncClass3dCalcByEllipsoid:=TFixFuncClass3dCalcByEllipsoidWP.Create;
+    FFixFuncClass3dCalcByEllipsoid:=TFixFuncClass3dCalcByEllipsoid.Create;
     FFixFuncClass3dCalcByEllipsoid.InitFixation(iMinimumSamples);
     if Assigned(FFixFuncClass3dCalcByEllipsoid)then
       Result:=1;
@@ -35,7 +56,7 @@ begin
   end;
 end;
 
-function Calculate3DFixation( bGazeVectorFound: Integer;
+function Calculate3DFixation( bValidSample: Integer;
                               fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze: Single;
                               fAccuracyAngleRad: Single;
                               iMinimumSamples: Integer;
@@ -47,12 +68,8 @@ function Calculate3DFixation( bGazeVectorFound: Integer;
                         out   pfEllipsoidYawDelayed, pfEllipsoidPitchDelayed: Single;
                         out   piSacDurationDelayed, piFixDurationDelayed: Integer):Integer; stdcall;
 
-//                        out   x_Fix3D,
-//                              y_Fix3D,
-//                              z_Fix3D: Integer ): Integer; stdcall;
 
-var AlphaString: string;
-    EyeMotionState: Integer;
+var EyeMotionState: Integer;
 
 
 
@@ -60,10 +77,6 @@ var AlphaString: string;
 begin
 
   try
-
-    //AlphaString:=Format('%1.1f',[fAccuracyAngle*57.3]);
-    //fAccuracyAngleRad:=fAccuracyAngleRad/57.3;
-
 
     if not Assigned(FFixFuncClass3dCalcByEllipsoid)then
       Result:=-1
@@ -77,7 +90,7 @@ begin
     pfZGazeDelayed:=0;
 
     // Übergabe des 3D-Samples an den 3D-Fixations-Alg.
-    EyeMotionState:=FFixFuncClass3dCalcByEllipsoid.DetectFixation(  bGazeVectorFound,
+    EyeMotionState:=FFixFuncClass3dCalcByEllipsoid.DetectFixation(  bValidSample,
                                                                     fXLeftEye, fYLeftEye, fZLeftEye,
                                                                     fXRightEye, fYRightEye, fZRightEye,
                                                                     fXGaze, fYGaze, fZGaze,

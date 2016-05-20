@@ -2,35 +2,19 @@
 //****************************************************************************************************************************************************
 //***
 //***
-//***       FixFuncClass3dCalcByEllipsoid -Dispersionsbasierte Erkennung dreidimensionaler Fixationen mit ellipsoiden Toleranzbereich
+//***       FixFuncClass3dCalcByEllipsoidWP - Algoritmus zur Berechnung dreidimensionaler Fixationen mit Ellipsoid-Rückgabeparametern
 //***       =========================================================================================================================
 //***
-//***       Datum:            20.05.2016
-//***       Entwickler:       Sascha Weber (sascha.weber@tu-dresden.de)
 //***
-//***       Beschreibung:     Dieser Funktion werden dreidimensionale Blickorte übergeben und anhand einstellbarer Parameter
-//***                         geprüft, ob sich die 3D-Blickorte innerhalb eines ellipsoiden Toleranzberereich befinden. Liegt die
-//***                         minimale Anzahl an Samples innerhalb der ellispoiden Fixationshülle, wird die Fixationshypothese bestätigt.
-//***                         Mit jedem neuen Sample wird die Fixationshypothese erneut geprüft und bei Bestätigung das neue Sample der
-//***                         bestehenden Fixation hinzugefügt. Die Rückgabewerte beinhalten u.a. die Parameter der dreidimensionalen Fixation.
-//***                         Die detaillierte Beschreibung der Parameter und Algorithmen erfolgt an den entsprechenden Stellen im Source-Code.
+//***       SW 17.09.2013
+//***
+//***       Berechnung einer 3D-Fixation anhand eines Ellipsoiden. Die Parameter des Ellipsoiden ergeben sich
+//***       aus der Genauigkeit des Eyetrackingsystems und der Entfernung des aktuellen Zentrums. Bei Integration
+//***       eines neuen Samples muss der Ellipsoid dreidimensional neu ausgerichtet werden. Zur Bestimmung eines
+//***       Fluchtpunktes wird ein Zyklopenauge als Mittelwert der beiden Augenpositionen definiert.
 //***
 //***
-//***       Implementierung:  Die dreidimensionale Fixationserkennung mit ellipsoiden Toleranzbereich wurde in Kooperation mit
-//***                         Dixon Cleveland (LC-Technologies, Inc.) in die bislang zweidimensionale Logik der
-//***                         Eyegaze Analysis System Fixationserkennung implementiert und auf die dritte Dimension erweitert.
 //***
-//***                         Original 2D-Fixationserkennung             File Name:       FIXFUNC.C
-//***                                                                    Program Name:    Eye Fixation Analysis Functions
-//***                                                                    Company:         LC Technologies, Inc.
-//***                                                                                     10363 Democracy Lane
-//***                                                                                     Fairfax, VA 22030
-//***                                                                                     (703) 385-8800
-//***                                                                    Date Created:    10/20/89
-//***                                                                                     04/12/95 modified: turned into collection of functions
-//***
-//***
-
 
 
 unit FixFuncClass3dCalcByEllipsoid;
@@ -38,7 +22,7 @@ interface
 uses Windows, CodeSiteLogging;
 
 type
-  TFixFuncClass3dCalcByEllipsoid = class
+  TFixFuncClass3dCalcByEllipsoidWP = class
   const
     RING_SIZE = 121;                    // *  Größe des Ringpuffers, in dem die berechneten Samples gespeichert werden.
                                         // *  Der Wert muss größer als die minimale Anzahl an Samples zur Erkennung einer Fixation iMinimumFixSamples sein.
@@ -68,7 +52,7 @@ type
       fY: Single;   			              // *
       fZ: Single;
 
-      fXEllipsoidR: Single;             // *  Parameter des Ellipsoiden bestimmt durch dessen letzte Ausrichtung der Fixation im 3D-Raum
+      fXEllipsoidR: Single;             // *  Parameter des Ellipsoidenzum bestimmt durch dessen letzte Ausrichtung der Fixation im 3D-Raum
       fYEllipsoidR: Single;
       fZEllipsoidR: Single;
       fEllipsoidYaw: Single;
@@ -118,13 +102,13 @@ type
     iMaxMissedSamples: Integer;         // *  Maximale Anzahl fehlender, fortlaufender Blickort-Samples, um die Fixation
                                         // *  fortführen zu können
 
-    iMaxOutSamples: Integer; 		        // *  Maximale Anzahl fehlender, fortlaufender Blickort-Samples, die außerhalb des
-                                        // *  Akzeptanz-Bereiches liegen dürfen
+    iMaxOutSamples: Integer; 		        // * Maximale Anzahl fehlender, fortlaufender Blickort-Samples, die außerhalb des
+                                        // * Akzeptanz-Bereiches liegen dürfen
 
     stFix: array [0 .. 2] of _stFix;	  // neue, gegnwärtige und vorangegangene Fixation
-                                        // *  NEW_FIX = 0
-                                        // *  PRES_FIX = 1
-                                        // *  PREV_FIX = 2
+                                        // * NEW_FIX = 0
+                                        // * PRES_FIX = 1
+                                        // * PREV_FIX = 2
 
     stRingBuf: array [0 .. RING_SIZE] of _stRingBuf;
 
@@ -148,7 +132,7 @@ type
   public
     ///////////////////////////////////////////////////////////////////////////////
     ///
-    ///  Global Output Parameters
+    ///  SW: Global Output Parameters
     ///
     gb_stRingBuf: array [0 .. RING_SIZE] of _stRingBuf;
     gb_stFix: array [0 .. 2] of _stFix;
@@ -157,7 +141,7 @@ type
     procedure InitFixation(iMinimumFixSamples: Integer);
 
     function DetectFixation(  // INPUT
-                              bValidSample: Integer;
+                              bGazepointFound: Integer;
 
                               fXLeftEye: Single;
                               fYLeftEye: Single;
@@ -175,7 +159,7 @@ type
                               iMinimumFixSamples: Integer;
 
                               // OUTPUT
-                 out          pbValidSampleDelayed: Integer;
+                 out          pbGazepointFoundDelayed: Integer;
 
                  out          pfXGazeDelayed,
                               pfYGazeDelayed,
@@ -212,7 +196,7 @@ const
 
 
 
-procedure TFixFuncClass3dCalcByEllipsoid.ResetFixationHypothesis(iNewPresOrPrev: Integer);
+procedure TFixFuncClass3dCalcByEllipsoidWP.ResetFixationHypothesis(iNewPresOrPrev: Integer);
 // * Zurücksetzen der NewPresPrev-Fixation (abhängig vom Übergabe-Argument)
 
 begin
@@ -240,7 +224,7 @@ begin
   end;
 end;
 
-function TFixFuncClass3dCalcByEllipsoid.IsGazeInFix(iNewPresOrPrev: Integer; fXEyeLeft, fYEyeLeft, fZEyeLeft, fXEyeRight, fYEyeRight, fZEyeRight: Single; fXGaze, fYGaze, fZGaze: Single; fAccuracyAngleRad: Single): Integer;
+function TFixFuncClass3dCalcByEllipsoidWP.IsGazeInFix(iNewPresOrPrev: Integer; fXEyeLeft, fYEyeLeft, fZEyeLeft, fXEyeRight, fYEyeRight, fZEyeRight: Single; fXGaze, fYGaze, fZGaze: Single; fAccuracyAngleRad: Single): Integer;
 // * Berechnung des Abstandes des Blickortes zum NewPresPrev-Fixationsort
 
 var
@@ -310,7 +294,7 @@ end;
 
 
 
-procedure TFixFuncClass3dCalcByEllipsoid.TestPresFixHypAndUpdateRingBuffer(iMinimumFixSamples: Integer);
+procedure TFixFuncClass3dCalcByEllipsoidWP.TestPresFixHypAndUpdateRingBuffer(iMinimumFixSamples: Integer);
 // * Jedes Mal, wenn ein Blickort zur jetzigen Fixations-Hypothese hinzugefügt wird, prüft die Funktion, ob die
 // * Fixations-Hypothese bestätigt werden kann. Falls ja, updatet diese Funktion den Ringpuffer mit den entsprechenden Werten.
 
@@ -450,7 +434,7 @@ end;
 
 
 
-procedure TFixFuncClass3dCalcByEllipsoid.UpdateFixationHypothesis(iNewPresOrPrev: Integer;  fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad: Single; iMinimumFixSamples: Integer);
+procedure TFixFuncClass3dCalcByEllipsoidWP.UpdateFixationHypothesis(iNewPresOrPrev: Integer;  fXLeftEye, fYLeftEye, fZLeftEye, fXRightEye, fYRightEye, fZRightEye, fXGaze, fYGaze, fZGaze, fAccuracyAngleRad: Single; iMinimumFixSamples: Integer);
 // * Diese Funktion erweitert die iNewPresOrPrev-Fixation um einen neuen Blickort -> beides Übergabeparameter
 // * und prüft, ob genug Samples vorhanden sind, um zu erkennen, dass das Auge in diesem Moment fixiert.
 // * Falls dem so ist, deklariere die betreffenden Ringpuffereinträge als zur Fixation zugehörig.
@@ -490,7 +474,7 @@ begin
 end;
 
 
-procedure TFixFuncClass3dCalcByEllipsoid.StartFixationHypothesisAtGazepoint(iNewPresOrPrev: Integer; fXGaze, fYGaze, fZGaze: Single);
+procedure TFixFuncClass3dCalcByEllipsoidWP.StartFixationHypothesisAtGazepoint(iNewPresOrPrev: Integer; fXGaze, fYGaze, fZGaze: Single);
 // * Diese Funktion startet die Fixation (NewPresPrev) am Blickort (beides Übergabewerte) und stellt sicher,
 // * dass es keine neue Fixations-Hypothese gibt.
 
@@ -508,8 +492,8 @@ begin
   stFix[iNewPresOrPrev].fYEllipsoidR := 0;
   stFix[iNewPresOrPrev].fZEllipsoidR := 0;
 
-  stFix[iNewPresOrPrev].fEllipsoidYaw := 0;
-  stFix[iNewPresOrPrev].fEllipsoidPitch := 0;
+  stFix[iNewPresOrPrev].fEllipsoidYaw := 0;    // *  Normalerweise kann man an dieser Stelle bereits die Winkel für den ersten Punkt berechnen,
+  stFix[iNewPresOrPrev].fEllipsoidPitch := 0;  // *  jedoch wird dieser mit UpdateFixationHypotheses sowieso durchgeführt.
 
   stFix[iNewPresOrPrev].iStartCount := iDfCallCount;
   stFix[iNewPresOrPrev].iEndCount := iDfCallCount;
@@ -529,7 +513,7 @@ end;
 
 
 
-procedure TFixFuncClass3dCalcByEllipsoid.MoveNewFixToPresFix;
+procedure TFixFuncClass3dCalcByEllipsoidWP.MoveNewFixToPresFix;
 // * Diese Funktion kopiert die neuen Fixationsdaten in die gegenwärtige Fixation und löscht die neue Fixations-Hypothese
 
 begin
@@ -537,7 +521,7 @@ begin
    // * Fixations-Akzeptanzbereiches liegen.
    iNOutsidePresEllipsoid := 0;
 
-   // * Erklärt die neue Fixations-Hypothese zur gegenwärtigen Fixations-Hypothese.
+   // * Macht die neue Fixations-Hypothese zur gegenwärtigen Fixations-Hypothese.
    stFix[PRES_FIX] := stFix[NEW_FIX];
 
    // * Löscht NEW_FIX.
@@ -545,45 +529,45 @@ begin
 end;
 
 
-procedure TFixFuncClass3dCalcByEllipsoid.CalcEllipsoid(fXEyeLeft, fYEyeLeft,
+procedure TFixFuncClass3dCalcByEllipsoidWP.CalcEllipsoid(fXEyeLeft, fYEyeLeft,
   fZEyeLeft, fXEyeRight, fYEyeRight, fZEyeRight, fXEllipsoidCenter, fYEllipsoidCenter, fZEllipsoidCenter,
   fAccuracyAngleRad: Single; var fXEllipsoidR, fYEllipsoidR, FZEllipsoidR, fEllipsoidYaw, fEllipsoidPitch: Single);
 
 var
-    XCycl,YCycl,ZCycl: Single;    // Zyklopenauge
+    XCycl,YCycl,ZCycl: Single;                 // cyclops eye
 
-    D: Single;                    // Augenabstand
-    R: Single;                    // Entfernung zwischen Zyklopenauge und aktueller Fixation
+    D: Single;              // distance between the eyes
+    R: Single;              // distance between cyclops eye and current fixation
 
 begin
-   // Position des Zyklopenauges
+   // define a cyclops eye
   XCycl:=round((fXEyeLeft+fXEyeRight)/2);
   YCycl:=round((fYEyeLeft+fYEyeRight)/2);
   ZCycl:=round((fZEyeLeft+fZEyeRight)/2);
 
+
+  // distance between eyes
   D:=round(sqrt(sqr(fXEyeLeft-fXEyeRight)+sqr(fYEyeLeft-fYEyeRight)+sqr(fZEyeLeft-fZEyeRight)));
 
+  // distance between cyclops eye and current fixation
   R:=round(sqrt(sqr(XCycl-fXEllipsoidCenter)+sqr(YCycl-fYEllipsoidCenter)+sqr(ZCycl-fZEllipsoidCenter)));
 
 
-  // Parameter der Ellipsoiden Fixationshülle
+  // ellipsoid parameters based on the accuracy and distance between eyes and fixation
   fXEllipsoidR:=R*fAccuracyAngleRad;
   fYEllipsoidR:=R*fAccuracyAngleRad;
   FZEllipsoidR:=fXEllipsoidR*(R/D);
 
-  fEllipsoidYaw:=+arctan((fXEllipsoidCenter-XCycl)/(fZEllipsoidCenter-ZCycl));      // Gierwinkel (yaw angle), psi ist positiv ausgerichtet falls sich
-                                                                                    // die Fixation rechts vom Zyklopenauge befindet
-
-  fEllipsoidPitch:=-arctan((fYEllipsoidCenter-YCycl)/(fZEllipsoidCenter-ZCycl));    // Neigungswinkel (pitch angle), theta ist positiv ausgerichtet
-                                                                                    // falls sich die Fixation oberhalb des Zyklopenauges befindet
+  fEllipsoidYaw:=+arctan((fXEllipsoidCenter-XCycl)/(fZEllipsoidCenter-ZCycl));      // yaw angle, psi is positive when the person looks left
+  fEllipsoidPitch:=-arctan((fYEllipsoidCenter-YCycl)/(fZEllipsoidCenter-ZCycl));    // pitch angle, theta is positive when the person looks up
 
 end;
 
-procedure TFixFuncClass3dCalcByEllipsoid.DeclarePresentFixationComplete(iMinimumFixSamples:Integer);
+procedure TFixFuncClass3dCalcByEllipsoidWP.DeclarePresentFixationComplete(iMinimumFixSamples:Integer);
 // * Diese Funktion:
 // * 	a) erklärt die aktuelle Fixation für beendet bei stFix[PRES_FIX].iEndCount.
-// * 	b) erklärt die gegenwärtige Fixation zur vorhergehenden Fixation und
-// * 	c) erklärt die neue Fixation, falls vorhanden zur gegenwärtigen Fixation.
+// * 	b) macht die gegenwärtige Fixation zur vorhergehenden Fixation und
+// * 	c) macht die neue Fixation, falls vorhanden zur gegenwärtigen Fixation.
 
 var
   iRingIndexLastFixSample:Integer;	//* Ringindex des letzten Samples der gegenwärtigen kompletten Fixation
@@ -608,17 +592,17 @@ begin
    //*  Erkläre die gegenwärtige Fixation für beendet.
    stRingBuf[iRingIndexLastFixSample].iEyeMotionState := FIXATION_COMPLETED;
 
-   //* Erkläre die gegenwärtige Fixation zur vorhergehenden Fixation
+   //* Mach die gegenwärtige Fixation zur vorhergehenden Fixation
    stFix[PREV_FIX] := stFix[PRES_FIX];
 
-   //* Erkläre die Daten der neuen Fixation, falls vorhanden, zur gegenwärtigen Fixation, lösche die neue Fixation
+   //* Mache die Daten der neuen Fixation, falls vorhanden, zur gegenwärtigen Fixation, lösche die neue Fixation
    //* und prüfe, ob es genug Samples in der neuen Fixation (jetzt die gegenwärtige) gibt, um zu prüfen, ob das Auge
    //* aktuell fixiert.
    MoveNewFixToPresFix();
 end;
 
 
-procedure TFixFuncClass3dCalcByEllipsoid.InitFixation(iMinimumFixSamples: Integer);
+procedure TFixFuncClass3dCalcByEllipsoidWP.InitFixation(iMinimumFixSamples: Integer);
 // * iMinimumFixSamples = Minimale Anzahl an Gaze Samples zur Bestimmung einer Fixation
 // * Beachte: Falls der Eingabewert kleiner 3 ist, wird dieser auf 3 gesetzt.
 
@@ -656,6 +640,9 @@ begin
     stRingBuf[iCurrentRingIndex].fEllipsoidYaw := 0;
     stRingBuf[iCurrentRingIndex].fEllipsoidPitch := 0;
 
+
+//    stRingBuf[iCurrentRingIndex].fGazeDeviation := -0.1;
+
     stRingBuf[iCurrentRingIndex].iEyeMotionState := MOVING;
     stRingBuf[iCurrentRingIndex].iSacDuration := 0;
     stRingBuf[iCurrentRingIndex].iFixDuration := 0;
@@ -679,12 +666,11 @@ end;
 
 
 
-function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
+function TFixFuncClass3dCalcByEllipsoidWP.DetectFixation(
 
                                           // * INPUT PARAMETER:
-                                          bValidSample: Integer; 		          // *  Indikator, ob der bildverarbeitende Algorithmus gültige Blickdaten
-                                                                              // *  für beide Augen gefunden hat  (0=FALSE, 1=TRUE)
-
+                                          bGazepointFound: Integer; 		      // *  Indikator, ob der bildverarbeitende Algorithmus gefunden und damit
+                                                                              // *  einen gültigen Blickpunkt berechnet hat oder nicht  (TRUE/FALSE)
                                           fXLeftEye: Single;                  // *  Koordinaten linkes Auge
                                           fYLeftEye: Single;
                                           fZLeftEye: Single;
@@ -693,27 +679,27 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
                                           fYRightEye: Single;
                                           fZRightEye: Single;
 
-                                          fXGaze: Single; 				            // *  aktueller 3D-Blickort
+                                          fXGaze: Single; 				            // *  aktueller Blickort
                                           fYGaze: Single;
                                           fZGaze: Single;
 
-
-                                                                                                                                                                   fAccuracyAngleRad: Single;          // *  Schwellwert für die Berechnung der ellipsoiden Fixationshülle
+                                          fAccuracyAngleRad: Single;          // *  Genauigkeit des Eyetracking Systems
 
                                           iMinimumFixSamples: Integer; 		    // *  minimale Anzahl an Gaze Samples, um eine Fixation zu erkennen.
                                                                               // *  Beachte: Falls dieser Wert mit weniger als 3 beträgt,
                                                                               // * 	         wird er automatisch auf 3 gesetzt.
 
+
                                           // * OUTPUT PARAMETER: Verzögerte Blickortdaten mit Fixationsparametern
 
-                           out            pbValidSampleDelayed: Integer;      // * Indikator, ob das Sample iMinimumFixSamples zuvor gültig war
+                           out            pbGazepointFoundDelayed: Integer;   // * Indikator, ob ein Sample iMinimumFixSamples zuvor gefunden wurde.
 
                            out            pfXGazeDelayed,  		                // * Blickortkoordinaten - iMinimumFixSamples vorher
                                           pfYGazeDelayed,
                                           pfZGazeDelayed: Single;
 
                                           // * Fixationsdaten - verzögert:
-                           out            pfXFixDelayed, 			                // * Fixationszentrum - iMinimumFixSamples vorher
+                           out            pfXFixDelayed, 			                // * geschätzter Fixationsort - iMinimumFixSamples vorher
                                           pfYFixDelayed,
                                           pfZFixDelayed: Single;
 
@@ -852,7 +838,7 @@ begin
   stRingBuf[iCurrentRingIndex].fYGaze := fYGaze;
   stRingBuf[iCurrentRingIndex].fZGaze := fZGaze;
 
-  stRingBuf[iCurrentRingIndex].bGazeFound := bValidSample;
+  stRingBuf[iCurrentRingIndex].bGazeFound := bGazepointFound;
 
   // * Zunächst nehme an, dass sich das Auge bewegt.
   // * Hinweis: Diese Werte werden während der weiteren Verarbeitung dieses und der folgenden Blickorte aktualisiert.
@@ -870,8 +856,9 @@ begin
   stRingBuf[iCurrentRingIndex].fEllipsoidYaw:= -0;
   stRingBuf[iCurrentRingIndex].fEllipsoidPitch:= -0;
 
+//  stRingBuf[iCurrentRingIndex].fGazeDeviation := -0.1;
   stRingBuf[iCurrentRingIndex].iFixDuration := 0;
-
+                                                                                    asdf
   // * Der folgende Code erhöht die Sakkadendauer während nicht fixierender Perioden.
   // * Falls das Auge bereits im letzten Sample in Bewegung war, …
   if (stRingBuf[iPastRingIndex].iEyeMotionState = MOVING) then
@@ -890,7 +877,7 @@ begin
   // *- - - - - - - - - - - - - Prozess für getrackte Augen - - - - - - - - - - - - - -*/
 
   // * A) Falls das Sample einen gültigen Blickort enthält, …
-  if (bValidSample = TRUE) then
+  if (bGazepointFound = TRUE) then
   begin
     // * A1 B) Falls eine Fixationshypothese für die gegenwärtige Fixation existiert
     if (stFix[PRES_FIX].iNEyeFoundSamples > 0) then
@@ -957,7 +944,7 @@ begin
           if (stFix[PRES_FIX].bFixationVerified = TRUE) then
           begin
             // *                G1) - Erkläre die PRES_FIX am letzten guten Sample als abgeschlossen,
-            // *                    - Erkläre die PRES_FIX zur PREV_FIX und die
+            // *                    - Mache die PRES_FIX zur PREV_FIX und die
             // *                    - die NEW_FIX zur PRES_FIX
             DeclarePresentFixationComplete(iMinimumFixSamples);
           end
@@ -1032,7 +1019,7 @@ begin
       if (stFix[PRES_FIX].bFixationVerified = TRUE) then
       begin
         // *          K1) - Erkläre die PRES_FIX am letzten guten Sample als abgeschlossen,
-        // *              - Erkläre die PRES_FIX zur PREV_FIX und die
+        // *              - Mache die PRES_FIX zur PREV_FIX und die
         // *              - die NEW_FIX zur PRES_FIX
         DeclarePresentFixationComplete(iMinimumFixSamples);
       end
@@ -1054,7 +1041,7 @@ begin
   // * Gib die verzögerten Blickortdaten, mit den entsprechenden Sakkaden-/Fixationsinformationen an die aufrufende
   // * Funktion zurück (werden als Output-Parameter zurückgegeben).
 
-  pbValidSampleDelayed := stRingBuf[iRingIndexDelay].bGazeFound;
+  pbGazepointFoundDelayed := stRingBuf[iRingIndexDelay].bGazeFound;
 
   pfXGazeDelayed := stRingBuf[iRingIndexDelay].fXGaze;
   pfYGazeDelayed := stRingBuf[iRingIndexDelay].fYGaze;
@@ -1094,7 +1081,7 @@ end;
 
 
 
-procedure TFixFuncClass3dCalcByEllipsoid.TestPresentFixationHypothesis(iMinimumFixSamples: Integer);
+procedure TFixFuncClass3dCalcByEllipsoidWP.TestPresentFixationHypothesis(iMinimumFixSamples: Integer);
 
 // * Diese Funktion testet, ob es genügend Samples in der gegenwärtigen Fixationshypothese gibt, um das Auge als
 // * 'fixierend’ zu deklarieren. Falls eine Fixation läuft, aktualisiert die Funktion die entsprechenden momentanen und

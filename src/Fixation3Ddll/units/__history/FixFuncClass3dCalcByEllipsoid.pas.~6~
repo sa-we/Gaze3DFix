@@ -68,7 +68,7 @@ type
       fY: Single;   			              // *
       fZ: Single;
 
-      fXEllipsoidR: Single;             // *  Parameter des Ellipsoiden bestimmt durch dessen letzte Ausrichtung der Fixation im 3D-Raum
+      fXEllipsoidR: Single;             // *  Parameter des Ellipsoiden zum bestimmt durch dessen letzte Ausrichtung der Fixation im 3D-Raum
       fYEllipsoidR: Single;
       fZEllipsoidR: Single;
       fEllipsoidYaw: Single;
@@ -157,7 +157,7 @@ type
     procedure InitFixation(iMinimumFixSamples: Integer);
 
     function DetectFixation(  // INPUT
-                              bValidSample: Integer;
+                              bGazepointFound: Integer;
 
                               fXLeftEye: Single;
                               fYLeftEye: Single;
@@ -175,7 +175,7 @@ type
                               iMinimumFixSamples: Integer;
 
                               // OUTPUT
-                 out          pbValidSampleDelayed: Integer;
+                 out          pbGazepointFoundDelayed: Integer;
 
                  out          pfXGazeDelayed,
                               pfYGazeDelayed,
@@ -682,9 +682,8 @@ end;
 function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
 
                                           // * INPUT PARAMETER:
-                                          bValidSample: Integer; 		          // *  Indikator, ob der bildverarbeitende Algorithmus gültige Blickdaten
-                                                                              // *  für beide Augen gefunden hat  (0=FALSE, 1=TRUE)
-
+                                          bGazepointFound: Integer; 		      // *  Indikator, ob der bildverarbeitende Algorithmus gefunden und damit
+                                                                              // *  einen gültigen Blickpunkt berechnet hat oder nicht  (TRUE/FALSE)
                                           fXLeftEye: Single;                  // *  Koordinaten linkes Auge
                                           fYLeftEye: Single;
                                           fZLeftEye: Single;
@@ -693,27 +692,27 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
                                           fYRightEye: Single;
                                           fZRightEye: Single;
 
-                                          fXGaze: Single; 				            // *  aktueller 3D-Blickort
+                                          fXGaze: Single; 				            // *  aktueller Blickort
                                           fYGaze: Single;
                                           fZGaze: Single;
 
-
-                                                                                                                                                                   fAccuracyAngleRad: Single;          // *  Schwellwert für die Berechnung der ellipsoiden Fixationshülle
+                                          fAccuracyAngleRad: Single;          // *  Genauigkeit des Eyetracking Systems
 
                                           iMinimumFixSamples: Integer; 		    // *  minimale Anzahl an Gaze Samples, um eine Fixation zu erkennen.
                                                                               // *  Beachte: Falls dieser Wert mit weniger als 3 beträgt,
                                                                               // * 	         wird er automatisch auf 3 gesetzt.
 
+
                                           // * OUTPUT PARAMETER: Verzögerte Blickortdaten mit Fixationsparametern
 
-                           out            pbValidSampleDelayed: Integer;      // * Indikator, ob das Sample iMinimumFixSamples zuvor gültig war
+                           out            pbGazepointFoundDelayed: Integer;   // * Indikator, ob ein Sample iMinimumFixSamples zuvor gefunden wurde.
 
                            out            pfXGazeDelayed,  		                // * Blickortkoordinaten - iMinimumFixSamples vorher
                                           pfYGazeDelayed,
                                           pfZGazeDelayed: Single;
 
                                           // * Fixationsdaten - verzögert:
-                           out            pfXFixDelayed, 			                // * Fixationszentrum - iMinimumFixSamples vorher
+                           out            pfXFixDelayed, 			                // * geschätzter Fixationsort - iMinimumFixSamples vorher
                                           pfYFixDelayed,
                                           pfZFixDelayed: Single;
 
@@ -852,7 +851,7 @@ begin
   stRingBuf[iCurrentRingIndex].fYGaze := fYGaze;
   stRingBuf[iCurrentRingIndex].fZGaze := fZGaze;
 
-  stRingBuf[iCurrentRingIndex].bGazeFound := bValidSample;
+  stRingBuf[iCurrentRingIndex].bGazeFound := bGazepointFound;
 
   // * Zunächst nehme an, dass sich das Auge bewegt.
   // * Hinweis: Diese Werte werden während der weiteren Verarbeitung dieses und der folgenden Blickorte aktualisiert.
@@ -890,7 +889,7 @@ begin
   // *- - - - - - - - - - - - - Prozess für getrackte Augen - - - - - - - - - - - - - -*/
 
   // * A) Falls das Sample einen gültigen Blickort enthält, …
-  if (bValidSample = TRUE) then
+  if (bGazepointFound = TRUE) then
   begin
     // * A1 B) Falls eine Fixationshypothese für die gegenwärtige Fixation existiert
     if (stFix[PRES_FIX].iNEyeFoundSamples > 0) then
@@ -1054,7 +1053,7 @@ begin
   // * Gib die verzögerten Blickortdaten, mit den entsprechenden Sakkaden-/Fixationsinformationen an die aufrufende
   // * Funktion zurück (werden als Output-Parameter zurückgegeben).
 
-  pbValidSampleDelayed := stRingBuf[iRingIndexDelay].bGazeFound;
+  pbGazepointFoundDelayed := stRingBuf[iRingIndexDelay].bGazeFound;
 
   pfXGazeDelayed := stRingBuf[iRingIndexDelay].fXGaze;
   pfYGazeDelayed := stRingBuf[iRingIndexDelay].fYGaze;
