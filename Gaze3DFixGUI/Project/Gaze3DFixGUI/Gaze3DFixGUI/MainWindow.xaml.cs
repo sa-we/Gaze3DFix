@@ -82,7 +82,10 @@ namespace Gaze3DFixGUI
         // import Fixation3D.dll function Init3DFixation
         [DllImport("Fixation3D.dll",
            CallingConvention = CallingConvention.StdCall)]
-        public static extern int Init3DFixation (int iMinimumSamples);
+        public static extern int Init3DFixation (
+                            int iMinimumSamples,
+                            int iMaxMissedSamples,
+                            int iMaxOutSamples);
         // import Fixation3D.dll function Calculate3DFixation
         [DllImport("Fixation3D.dll",
            CallingConvention = CallingConvention.StdCall)]
@@ -99,6 +102,8 @@ namespace Gaze3DFixGUI
                             Single fZGaze,
                             Single fAccuracyAngleRad,
                             int iMinimumSamples,
+                            int iMaxMissedSamples,
+                            int iMaxOutSamples,
                             out int pbGazepointFoundDelayed,
                             out Single pfXGazeDelayed,
                             out Single pfYGazeDelayed,
@@ -317,6 +322,10 @@ namespace Gaze3DFixGUI
 
             // dispersion
             TB_Dispersion.Text = settings.ThresholdDispersion.ToString();
+
+            // outliers and invalids
+            TB_Outliers.Text = settings.MaxNumberOutliers.ToString();
+            TB_Invalids.Text = settings.MaxNumberInvalids.ToString();
 
             // include case crossing
             if (settings.IncludeCaseCrossing == false)
@@ -553,6 +562,8 @@ namespace Gaze3DFixGUI
                 settings.Frequency = int.Parse(TB_Frequency.Text);
                 settings.ThresholdDuration = int.Parse(L_DurationValue.Content.ToString());
                 settings.ThresholdDispersion = double.Parse(TB_Dispersion.Text, nfi);
+                settings.MaxNumberOutliers = int.Parse(TB_Outliers.Text);
+                settings.MaxNumberInvalids = int.Parse(TB_Invalids.Text);
                 settings.IncludeCaseCrossing = CB_SpecialFixationCaseCrossing.IsChecked.Value;
                 settings.IncludeFirstOngoingFixation = CB_SpecialFixationCaseStartFile.IsChecked.Value;
 
@@ -873,7 +884,7 @@ namespace Gaze3DFixGUI
                     int resultcount = 0;
                     int filesize = gazefile3d.list_GazeData3D.Count();
 
-                    int init = Init3DFixation(iMinimumSamples);
+                    int init = Init3DFixation(iMinimumSamples, settings.MaxNumberInvalids, settings.MaxNumberOutliers);
                     int id = 0;
                     FixationFile fixationfile = new FixationFile();
                     fixationfile.filename = gazefile3d.filename;
@@ -932,6 +943,8 @@ namespace Gaze3DFixGUI
                                         fZGaze,
                                         fAccuracyAngleRad,
                                         iMinimumSamples,
+                                        settings.MaxNumberInvalids, 
+                                        settings.MaxNumberOutliers,
                                         out pbGazepointFoundDelayed,
                                         out pfXGazeDelayed,
                                         out pfYGazeDelayed,
@@ -1503,6 +1516,26 @@ namespace Gaze3DFixGUI
 
         // textbox dispersion lost focus 
         private void TB_Dispersion_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textbox = sender as TextBox;
+            if (textbox.Text == "")
+            {
+                textbox.Text = "0";
+            }
+        }
+
+        // textbox lost focus 
+        private void TB_Outliers_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox textbox = sender as TextBox;
+            if (textbox.Text == "")
+            {
+                textbox.Text = "0";
+            }
+        }
+
+        // textbox lost focus 
+        private void TB_Invalids_LostFocus(object sender, RoutedEventArgs e)
         {
             TextBox textbox = sender as TextBox;
             if (textbox.Text == "")

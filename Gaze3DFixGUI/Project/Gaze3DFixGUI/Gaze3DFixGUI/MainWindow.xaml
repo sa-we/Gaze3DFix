@@ -103,29 +103,56 @@
                         <TabItem Header="Fixation parameters" Name="TI_Fixations">
                             <Grid>
                                 <Label Content="Set temporal threshold" Height="30" HorizontalAlignment="Left" Margin="20,20,0,0" Name="L_TemporalThreshold" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="150" />
-                                <Label Content="Duration-Threshold (ms)" Height="30" HorizontalAlignment="Left" Margin="60,140,0,0" Name="L_Duration" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="150" />
+                                <Label Content="Duration-Threshold (ms)" Height="30" HorizontalAlignment="Left" Margin="40,140,0,0" Name="L_Duration" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="150" />
                                 <Label Content="100" Height="30" HorizontalAlignment="Left" HorizontalContentAlignment="Center" Margin="235,140,0,0" Name="L_DurationValue" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="100" />
-                                <Label Content="Number of samples" Height="30" HorizontalAlignment="Left" Margin="60,60,0,0" Name="L_Samples" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="125" />
+                                <Label Content="Number of samples" Height="30" HorizontalAlignment="Left" Margin="40,60,0,0" Name="L_Samples" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="125" />
                                 <Label Content="(?)" Height="30" HorizontalAlignment="Left" Margin="310,60,0,0" Name="L_NumberSamples_Hint" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="30">
                                     <Label.ToolTip>
                                         <ToolTip Name="TT_NumberofSamples">
                                             <StackPanel>
                                                 <TextBlock FontWeight="Bold">Number of samples</TextBlock>
-                                                <TextBlock>Define minimum number of samples (minimum 3)“.</TextBlock>
+                                                <TextBlock>Define minimum number of samples (minimum 3).</TextBlock>
                                             </StackPanel>
                                         </ToolTip>
                                     </Label.ToolTip>
                                 </Label>
                                 <TextBox Height="30" HorizontalAlignment="Left" Margin="260,60,0,0" Name="TB_Samples" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="50" Text="25" TextChanged="TB_SamplesChanged" TextAlignment="Center" MaxLength="7" LostFocus="TB_Samples_LostFocus" />
-                                <Label Content="Frequency (Hz)" Height="30" HorizontalAlignment="Left" Margin="60,100,0,0" Name="L_Frequency" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="150" />
+                                <Label Content="Frequency (Hz)" Height="30" HorizontalAlignment="Left" Margin="40,100,0,0" Name="L_Frequency" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="150" />
                                 <TextBox Height="30" HorizontalAlignment="Left" Margin="260,100,0,0" Name="TB_Frequency" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="50" Text="250" TextChanged="TB_FrequencyChanged" TextAlignment="Center" MaxLength="7" LostFocus="TB_Frequency_LostFocus" />
-                                <Label Content="Set spatial threshold" Height="30" HorizontalAlignment="Left" Margin="20,200,0,0" Name="L_SpatialThreshold" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="150" />
-                                <Label Content="Dispersion-Threshold (° DEG)" Height="30" HorizontalAlignment="Left" Margin="60,240,0,0" Name="L_Dispersion" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="175" />
-                                <TextBox Height="30" HorizontalAlignment="Left" Margin="260,240,0,0" Name="TB_Dispersion" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="50" Text="2" TextChanged="TB_DispersionChanged" LostFocus="TB_Dispersion_LostFocus" TextAlignment="Center" MaxLength="7" />
-                                <Label Content="Handle special fixation cases" Height="30" HorizontalAlignment="Left" Margin="20,300,0,0" Name="L_SpecialFixationCases" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="200" />
-                                <CheckBox Name="CB_SpecialFixationCaseCrossing" Content="Include case crossing fixations (see case identifier)" Width="500" Margin="60,348,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" IsChecked="True"/>
-                                <CheckBox Name="CB_SpecialFixationCaseStartFile" Content="Include fixation starting with first sample of the input file" Width="500" Margin="60,388,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" IsChecked="True"/>
-                                <Label Content="A fixation that is still ongoing while reaching the end of the input file will always be excluded." Height="30" Width="500" HorizontalAlignment="Left" Margin="75,420,0,0" Name="L_SpecialFixationCaseEndFile" VerticalAlignment="Top" VerticalContentAlignment="Center"/>
+                                <Label Content="Set spatial threshold" Height="30" HorizontalAlignment="Left" Margin="360,20,0,0" Name="L_SpatialThreshold" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="150" />
+                                <Label Content="Dispersion-Threshold (° DEG)" Height="30" HorizontalAlignment="Left" Margin="380,60,0,0" Name="L_Dispersion" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="175" />
+                                <TextBox Height="30" HorizontalAlignment="Left" Margin="570,60,0,0" Name="TB_Dispersion" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="50" Text="2" TextChanged="TB_DispersionChanged" LostFocus="TB_Dispersion_LostFocus" TextAlignment="Center" MaxLength="7" />
+
+                                <Label Content="Outliers and Invalids" Height="30" HorizontalAlignment="Left" Margin="20,200,0,0" Name="L_OutliersAndInvalids" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="150" />
+                                <Label Content="Max. number of consecutive outliers" Height="30" HorizontalAlignment="Left" Margin="40,240,0,0" Name="L_Outliers" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="210" />
+                                <Label Content="(?)" Height="30" HorizontalAlignment="Left" Margin="310,240,0,0" Name="L_NumberOutliers_Hint" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="30">
+                                    <Label.ToolTip>
+                                        <ToolTip Name="TT_NumberofOutliers">
+                                            <StackPanel>
+                                                <TextBlock FontWeight="Bold">Max. number of consecutive outliers</TextBlock>
+                                                <TextBlock>Define the max number of consecutive samples that may go outside the fixation acceptance ellipsoid.</TextBlock>
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </Label.ToolTip>
+                                </Label>
+                                <TextBox Height="30" HorizontalAlignment="Left" Margin="260,240,0,0" Name="TB_Outliers" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="50" Text="1" TextChanged="TB_TextChanged" TextAlignment="Center" MaxLength="7" LostFocus="TB_Outliers_LostFocus"/>
+                                <Label Content="Max. number of consecutive invalids" Height="30" HorizontalAlignment="Left" Margin="40,280,0,0" Name="L_Invalids" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="210" />
+                                <Label Content="(?)" Height="30" HorizontalAlignment="Left" Margin="310,280,0,0" Name="L_NumberInvalids_Hint" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="30">
+                                    <Label.ToolTip>
+                                        <ToolTip Name="TT_NumberofInvalids">
+                                            <StackPanel>
+                                                <TextBlock FontWeight="Bold">Max. number of invalids</TextBlock>
+                                                <TextBlock>Define the max number of consecutive samples that may go untracked within a fixation.</TextBlock>
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </Label.ToolTip>
+                                </Label>
+                                <TextBox Height="30" HorizontalAlignment="Left" Margin="260,280,0,0" Name="TB_Invalids" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="50" Text="3" TextChanged="TB_TextChanged" TextAlignment="Center" MaxLength="7" LostFocus="TB_Invalids_LostFocus"/>
+
+                                <Label Content="Handle special fixation cases" Height="30" HorizontalAlignment="Left" Margin="20,340,0,0" Name="L_SpecialFixationCases" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="200" />
+                                <CheckBox Name="CB_SpecialFixationCaseCrossing" Content="Include case crossing fixations (see case identifier)" Width="500" Margin="60,388,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" IsChecked="True"/>
+                                <CheckBox Name="CB_SpecialFixationCaseStartFile" Content="Include fixation starting with first sample of the input file" Width="500" Margin="60,428,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" IsChecked="True"/>
+                                <Label Content="A fixation that is still ongoing while reaching the end of the input file will always be excluded." Height="30" Width="500" HorizontalAlignment="Left" Margin="75,460,0,0" Name="L_SpecialFixationCaseEndFile" VerticalAlignment="Top" VerticalContentAlignment="Center"/>
                             </Grid>
                         </TabItem>
                         <TabItem Header="Output" Name="TI_Output">
