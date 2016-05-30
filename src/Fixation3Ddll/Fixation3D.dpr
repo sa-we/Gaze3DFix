@@ -42,12 +42,12 @@ var
     FFixFuncClass3dCalcByEllipsoid: TFixFuncClass3dCalcByEllipsoid;
 
 
-function Init3DFixation (iMinimumSamples: Integer): Integer; stdcall;
+function Init3DFixation (iMinimumSamplesInit, iMaxMissedSamplesInit, iMaxOutSamplesInit: Integer): Integer; stdcall;
 begin
   try
     Result:=0;
     FFixFuncClass3dCalcByEllipsoid:=TFixFuncClass3dCalcByEllipsoid.Create;
-    FFixFuncClass3dCalcByEllipsoid.InitFixation(iMinimumSamples);
+    FFixFuncClass3dCalcByEllipsoid.InitFixation(iMinimumSamplesInit,iMaxMissedSamplesInit, iMaxOutSamplesInit);
     if Assigned(FFixFuncClass3dCalcByEllipsoid)then
       Result:=1;
   except
