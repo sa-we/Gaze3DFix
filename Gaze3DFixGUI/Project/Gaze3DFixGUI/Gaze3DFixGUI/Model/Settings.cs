@@ -42,6 +42,9 @@ namespace Gaze3DFixGUI.Model
         private int threshold_duration = 100;
         private double threshold_dispersion = 2.0;
 
+        private int maxNumberOutliers = 1;
+        private int maxNumberInvalids = 3;
+
         private bool includeCaseCrossing = true;
         private bool includeFirstOngoingFixation = true;
 
@@ -241,6 +244,18 @@ namespace Gaze3DFixGUI.Model
         {
             get { return threshold_dispersion; }
             set { threshold_dispersion = value; }
+        }
+
+        public int MaxNumberOutliers
+        {
+            get { return maxNumberOutliers; }
+            set { maxNumberOutliers = value; }
+        }
+
+        public int MaxNumberInvalids
+        {
+            get { return maxNumberInvalids; }
+            set { maxNumberInvalids = value; }
         }
 
         public bool IncludeCaseCrossing
