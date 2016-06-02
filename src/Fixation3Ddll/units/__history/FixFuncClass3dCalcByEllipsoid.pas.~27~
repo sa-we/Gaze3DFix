@@ -2,25 +2,19 @@
 //****************************************************************************************************************************************************
 //***
 //***
-//***       FixFuncClass3dCalcByEllipsoid - dispersion based detection of 3D fixations with ellipsoid accanptance space
-//***       ===========================================================================================================
+//***       FixFuncClass3dCalcByEllipsoid -Dispersionsbasierte Erkennung dreidimensionaler Fixationen mit ellipsoiden Toleranzbereich
+//***       =========================================================================================================================
 //***
-//***       02.06.2016
-//***       Sascha Weber (sascha.weber@tu-dresden.de)
-//***
-//***
-//***       Description:      This function accpts 3D gazepoints and detects 3D fixations and saccades by a dispersion based algorithm with an
-//***                         ellipsoid tolerance area. Is the minimal number of 3D gazepoints located in the aceptance space, the fixatoin
-//***                         hypothesis is confirmed. With each new sample the fixation hypothesis is tested again and if it's already confirmed
-//***                         the new sample will be added to the current fixation. The output parameters contains e.g. the position and duration
-//***                         of the 3D fixation and the duration of the previous saccade. For the detailled specifications of the parameters and
-//***                         functionality of the algorithm see the comments in the source code below.
+//***       Datum:            20.05.2016
+//***       Entwickler:       Sascha Weber (sascha.weber@tu-dresden.de)
 //***
 //***
-//***       Implementation:   The spatial fixation detection logic with the ellipsoid tolerance area was implemented into the LC Technologies, Inc.
-//***                         fixfunc.h in cooperation with Dixon Cleveland and extends the estimation of 2D fixations to the third dimension.
 //***
-//***                         original 2D fixation detection             File Name:       FIXFUNC.C
+//***       Implementierung:  Die dreidimensionale Fixationserkennung mit ellipsoiden Toleranzbereich wurde in Kooperation mit
+//***                         Dixon Cleveland (LC-Technologies, Inc.) in die bislang zweidimensionale Logik der
+//***                         Eyegaze Analysis System Fixationserkennung implementiert und auf die dritte Dimension erweitert.
+//***
+//***                         Original 2D-Fixationserkennung             File Name:       FIXFUNC.C
 //***                                                                    Program Name:    Eye Fixation Analysis Functions
 //***                                                                    Company:         LC Technologies, Inc.
 //***                                                                                     10363 Democracy Lane
@@ -30,6 +24,13 @@
 //***                                                                                     04/12/95 modified: turned into collection of functions
 //***
 //***
+//***
+//***       Beschreibung:     Dieser Funktion werden dreidimensionale Blickorte übergeben und anhand einstellbarer Parameter
+//***                         geprüft, ob sich die 3D-Blickorte innerhalb eines ellipsoiden Toleranzberereich befinden. Liegt die
+//***                         minimale Anzahl an Samples innerhalb der ellispoiden Fixationshülle, wird die Fixationshypothese bestätigt.
+//***                         Mit jedem neuen Sample wird die Fixationshypothese erneut geprüft und bei Bestätigung das neue Sample der
+//***                         bestehenden Fixation hinzugefügt. Die Rückgabewerte beinhalten u.a. die Parameter der dreidimensionalen Fixation.
+//***                         Die detaillierte Beschreibung der Parameter und Algorithmen erfolgt an den entsprechenden Stellen im Source-Code.
 //***
 //***
 //***
@@ -624,10 +625,12 @@ procedure TFixFuncClass3dCalcByEllipsoid.InitFixation(iMinimumFixSamplesInit, iM
   // *
 
 begin
-  // *  Set the maximum allowable number of consecutive samples that may go untracked within a fixation.
+  // *  Set the maximum allowable number of consecutive samples that may go
+  // *  untracked within a fixation.
   iMaxMissedSamples := iMaxMissedSamplesInit;   // original: iMaxMissedSamples := 3;
 
-  // *  Set the maximum allowable number of consecutive samples that may go outside the fixation acceptance ellipsoid.
+  // *  Set the maximum allowable number of consecutive samples that may go
+  // *  outside the fixation acceptance ellipsoid.
   iMaxOutSamples := iMaxOutSamplesInit;         // original: iMaxOutSamples := 1;
 
   // *  Initialize the internal ring buffer.
@@ -693,8 +696,7 @@ function TFixFuncClass3dCalcByEllipsoid.DetectFixation(
 
                                           fXGaze: Single; 				            // *  3D coordinates of the current gazepoint
                                           fYGaze: Single;
-                                          fZGaze: Single;
-                                          fAccuracyAngleRad: Single;          // *  threshold for the ellipsoid dimensions related to the fixation distance
+                                          fZGaze: Single;                                                                                                                                                                                                  fAccuracyAngleRad: Single;          // *  Schwellwert für die Berechnung der ellipsoiden Fixationshülle
 
                                           iMinimumFixSamples: Integer; 		    // *  minimum number of gaze samples that can be considered a fixation
                                                                               // *    Note: if the input value is less than 3, the function sets it to 3

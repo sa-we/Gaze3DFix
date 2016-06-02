@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
-  <Transactions/>
-  <Default.Personality>
-    <Projects ActiveProject="D:\Devel\GitHub\Gaze3DFix\src\Fixation3Ddll\Fixation3D.dproj"/>
-  </Default.Personality>
+	<Transactions/>
+	<Default.Personality>
+		<Projects ActiveProject="D:\Devel\GitHub\Gaze3DFix\src\Gaze3Ddll\Gaze3D.dproj"/>
+	</Default.Personality>
 </BorlandProject>
