@@ -130,7 +130,7 @@
                                         <ToolTip Name="TT_NumberofOutliers">
                                             <StackPanel>
                                                 <TextBlock FontWeight="Bold">Max. number of consecutive outliers</TextBlock>
-                                                <TextBlock>Define the max number of consecutive samples that may go outside the fixation acceptance ellipsoid.</TextBlock>
+                                                <TextBlock>Define the max number of consecutive samples that may go outside the ellipsoid tolerance area.</TextBlock>
                                             </StackPanel>
                                         </ToolTip>
                                     </Label.ToolTip>
