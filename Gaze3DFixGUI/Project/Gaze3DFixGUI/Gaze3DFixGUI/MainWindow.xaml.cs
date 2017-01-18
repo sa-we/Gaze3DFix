@@ -129,22 +129,17 @@ namespace Gaze3DFixGUI
             if (gaze && fixations)
             {
                 RB_GazeAndFixations.IsChecked = true;
+                TI_Fixations.Visibility = Visibility.Visible;
             }
             else if (gaze && !fixations)
             {
                 RB_Gaze.IsChecked = true;
+                TI_Fixations.Visibility = Visibility.Collapsed;
             }
             else if (!gaze && fixations)
             {
                 RB_Fixations.IsChecked = true;
-            }
-            if (fixations)
-            {
                 TI_Fixations.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                TI_Fixations.Visibility = Visibility.Collapsed;
             }
 
             // tab assign columns
@@ -326,7 +321,7 @@ namespace Gaze3DFixGUI
             TB_Invalids.Text = settings.MaxNumberInvalids.ToString();
 
             // include case crossing
-            if (settings.IncludeCaseCrossing == false)
+            if (settings.IncludeCaseCrossing == false || settings.IncludeIdentifier == false)
             {
                 CB_SpecialFixationCaseCrossing.IsChecked = false;
             }
@@ -484,6 +479,7 @@ namespace Gaze3DFixGUI
 
             if (CB_SpecialFixationCaseCrossing != null)
             {
+                CB_SpecialFixationCaseCrossing.IsChecked = false;
                 CB_SpecialFixationCaseCrossing.Opacity = 0.5;
                 CB_SpecialFixationCaseCrossing.IsEnabled = false;
             }
@@ -892,7 +888,7 @@ namespace Gaze3DFixGUI
                     // add iMinimum Samples to finish algorithm and return last fixation
                     for (int i = 1; i <= iMinimumSamples; i++)
                     {
-                        GazeData gd = new GazeData(0,"", "", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                        GazeData gd = new GazeData(0,"", "", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                         GazeData3D gd3d = new GazeData3D(gd, 0, 0, 0);
                         gazefile3d.addGazeData3D(gd3d);
                         bufferlist.Add(gd3d);
@@ -1213,7 +1209,7 @@ namespace Gaze3DFixGUI
                         }
                         catch
                         {
-                            MessageBoxResult openfile = MessageBox.Show("An unknown error occured. Please check your input file(s) and make sure that both Dynamic Link Libraries (Gaze.dll and Fixation.dll) are in the same directory as the application.",
+                            MessageBoxResult openfile = MessageBox.Show("An unknown error occured. Please check your input file(s) and make sure that both Dynamic Link Libraries (Gaze.dll and Fixation3D.dll) are in the same directory as the application.",
                                 "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                         output();

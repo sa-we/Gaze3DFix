@@ -152,7 +152,6 @@
                                 <Label Content="Handle special fixation cases" Height="30" HorizontalAlignment="Left" Margin="20,340,0,0" Name="L_SpecialFixationCases" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="200" />
                                 <CheckBox Name="CB_SpecialFixationCaseCrossing" Content="Include case crossing fixations (see case identifier)" Width="500" Margin="60,388,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" IsChecked="True"/>
                                 <CheckBox Name="CB_SpecialFixationCaseStartFile" Content="Include fixation starting with first sample of the input file" Width="500" Margin="60,428,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" VerticalContentAlignment="Center" IsChecked="True"/>
-                                <Label Content="A fixation that is still ongoing while reaching the end of the input file will always be excluded." Height="30" Width="500" HorizontalAlignment="Left" Margin="75,460,0,0" Name="L_SpecialFixationCaseEndFile" VerticalAlignment="Top" VerticalContentAlignment="Center"/>
                             </Grid>
                         </TabItem>
                         <TabItem Header="Output" Name="TI_Output">
