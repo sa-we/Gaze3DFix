@@ -268,9 +268,9 @@ namespace Gaze3DFixGUI.Controller
                             -1,
                             -1);
 
-                        gaze3DX = int.Parse(words[column_Gaze3DX - 1], nfi);
-                        gaze3DY = int.Parse(words[column_Gaze3DY - 1], nfi);
-                        gaze3DZ = int.Parse(words[column_Gaze3DZ - 1], nfi);
+                        gaze3DX = Convert.ToInt32(double.Parse(words[column_Gaze3DX - 1], nfi));
+                        gaze3DY = Convert.ToInt32(double.Parse(words[column_Gaze3DY - 1], nfi));
+                        gaze3DZ = Convert.ToInt32(double.Parse(words[column_Gaze3DZ - 1], nfi));
 
                         GazeData3D gazedata3d = new GazeData3D(
                             gazedata,
